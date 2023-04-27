@@ -19,7 +19,7 @@ package storage
 import (
 	"github.com/usbarmory/tamago/soc/nxp/usdhc"
 
-	"github.com/usbarmory/armory-witness-boot/config"
+	"github.com/transparency-dev/armored-witness-boot/config"
 )
 
 // Configuration reads an armory-witness-boot configuration data gob from a

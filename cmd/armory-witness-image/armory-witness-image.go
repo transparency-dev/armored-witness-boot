@@ -23,7 +23,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/usbarmory/armory-witness-boot/config"
+	"github.com/transparency-dev/armored-witness-boot/config"
 )
 
 type Flags struct {

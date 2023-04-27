@@ -23,8 +23,8 @@ import (
 
 	"github.com/usbarmory/armory-boot/exec"
 
-	"github.com/usbarmory/armory-witness-boot/config"
-	"github.com/usbarmory/armory-witness-boot/storage"
+	"github.com/transparency-dev/armored-witness-boot/config"
+	"github.com/transparency-dev/armored-witness-boot/storage"
 )
 
 // Quorum defines the number of required authentication signatures for

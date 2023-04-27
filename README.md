@@ -62,7 +62,7 @@ cd ../bin && export TAMAGO=`pwd`/go
 Example compilation with embedded keys and secure boot:
 
 ```
-git clone https://github.com/usbarmory/armory-witness-boot && cd armory-witness-boot
+git clone https://github.com/transparency-dev/armored-witness-boot && cd armory-witness-boot
 make PUBLIC_KEY1=armory-witness-boot-1.pub PUBLIC_KEY2=armory-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
 ```
 
@@ -77,13 +77,13 @@ You can automatically download, compile and install the utility, under your
 GOPATH, as follows:
 
 ```
-go install github.com/usbarmory/armory-witness-boot/cmd/armory-witness-image@latest
+go install github.com/transparency-dev/armored-witness-boot/cmd/armory-witness-image@latest
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
-git clone https://github.com/usbarmory/armory-witness-boot
+git clone https://github.com/transparency-dev/armored-witness-boot
 cd armory-witness-boot && make armory-witness-image
 ```
 
@@ -102,10 +102,10 @@ go install github.com/usbarmory/armory-boot/cmd/armory-boot-usb@latest
 wget https://github.com/usbarmory/armory-ums/releases/download/v20201102/armory-ums.imx
 
 # download armory-witness-boot firmware
-wget https://github.com/usbarmory/armory-witness-boot/releases/download/v20201102/armory-witness-boot.imx
+wget https://github.com/transparency-dev/armored-witness-boot/releases/download/v20201102/armory-witness-boot.imx
 
 # download armory-witness-image utility
-go install github.com/usbarmory/armory-witness-boot/cmd/armory-witness-image@latest
+go install github.com/transparency-dev/armored-witness-boot/cmd/armory-witness-image@latest
 
 # download armory-witness firmware
 wget https://github.com/usbarmory/armory-witness/releases/download/v20201102/armory-witness

@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"log"
 	"runtime"
-	"time"
 
 	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
 )

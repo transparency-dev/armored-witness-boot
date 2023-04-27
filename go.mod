@@ -1,4 +1,4 @@
-module github.com/usbarmory/armory-witness-boot
+module github.com/transparency-dev/armored-witness-boot
 
 go 1.20
 

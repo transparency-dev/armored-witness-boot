@@ -18,7 +18,7 @@ BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart
 BUILD = ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
-PUBLIC_KEYS = [\"$(shell test ${PUBLIC_KEY1} && tail -n 1 ${PUBLIC_KEY1})\", \"$(shell test ${PUBLIC_KEY2} && tail -n 1 ${PUBLIC_KEY2})\"]
+PUBLIC_KEYS = [\"$(shell test ${OS_PUBLIC_KEY1} && tail -n 1 ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && tail -n 1 ${OS_PUBLIC_KEY2})\"]
 
 SHELL = /bin/bash
 
@@ -55,12 +55,12 @@ $(CMD):
 #### utilities ####
 
 check_env:
-	@if [ "${PUBLIC_KEY1}" == "" ] || [ ! -f "${PUBLIC_KEY1}" ]; then \
-		echo 'You need to set the PUBLIC_KEY1 variable to a valid authentication key path'; \
+	@if [ "${OS_PUBLIC_KEY1}" == "" ] || [ ! -f "${OS_PUBLIC_KEY1}" ]; then \
+		echo 'You need to set the OS_PUBLIC_KEY1 variable to a valid authentication key path'; \
 		exit 1; \
 	fi
-	@if [ "${PUBLIC_KEY2}" == "" ] || [ ! -f "${PUBLIC_KEY2}" ]; then \
-		echo 'You need to set the PUBLIC_KEY2 variable to a valid authentication key path'; \
+	@if [ "${OS_PUBLIC_KEY2}" == "" ] || [ ! -f "${OS_PUBLIC_KEY2}" ]; then \
+		echo 'You need to set the OS_PUBLIC_KEY2 variable to a valid authentication key path'; \
 		exit 1; \
 	fi
 

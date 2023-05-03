@@ -12,7 +12,7 @@ The following table summarizes currently supported SoCs and boards.
 
 ## Secure Boot
 
-On secure booted systems the `imx_signed` target should be used instead with the relevant
+On secure booted systems the `imx_signed` target should be used (instead of the unsigned `imx` one) with the relevant
 [`HAB_KEYS`](https://github.com/usbarmory/usbarmory/wiki/Secure-boot-(Mk-II)) set.
 
 ## Kernel signing
@@ -62,29 +62,29 @@ cd ../bin && export TAMAGO=`pwd`/go
 Example compilation with embedded keys and secure boot:
 
 ```
-git clone https://github.com/transparency-dev/armored-witness-boot && cd armory-witness-boot
-make PUBLIC_KEY1=armory-witness-boot-1.pub PUBLIC_KEY2=armory-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
+git clone https://github.com/transparency-dev/armored-witness-boot && cd armored-witness-boot
+make PUBLIC_KEY1=armored-witness-boot-1.pub PUBLIC_KEY2=armored-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
 ```
 
 ## Installing
 
 > :warning: this is a work in progress
 
-The `armory-witness-image` command line utility allows to create an image with
+The `armored-witness-image` command line utility allows to create an image with
 a valid bootloader configuration and kernel image.
 
 You can automatically download, compile and install the utility, under your
 GOPATH, as follows:
 
 ```
-go install github.com/transparency-dev/armored-witness-boot/cmd/armory-witness-image@latest
+go install github.com/transparency-dev/armored-witness-boot/cmd/armored-witness-image@latest
 ```
 
 Alternatively you can manually compile it from source:
 
 ```
 git clone https://github.com/transparency-dev/armored-witness-boot
-cd armory-witness-boot && make armory-witness-image
+cd armores-witness-boot && make armored-witness-image
 ```
 
 The utility output is meant to be flashed on the device using the
@@ -101,21 +101,21 @@ go install github.com/usbarmory/armory-boot/cmd/armory-boot-usb@latest
 # download armory-ums firmware
 wget https://github.com/usbarmory/armory-ums/releases/download/v20201102/armory-ums.imx
 
-# download armory-witness-boot firmware
-wget https://github.com/transparency-dev/armored-witness-boot/releases/download/v20201102/armory-witness-boot.imx
+# download armored-witness-boot firmware
+wget https://github.com/transparency-dev/armored-witness-boot/releases/download/v20201102/armored-witness-boot.imx
 
-# download armory-witness-image utility
-go install github.com/transparency-dev/armored-witness-boot/cmd/armory-witness-image@latest
+# download armored-witness-image utility
+go install github.com/transparency-dev/armored-witness-boot/cmd/armored-witness-image@latest
 
-# download armory-witness firmware
-wget https://github.com/usbarmory/armory-witness/releases/download/v20201102/armory-witness
+# download armored-witness-os firmware
+wget https://github.com/transparency-dev/armores-witness/releases/download/v20201102/armored-witness-os
 
-# download armory-witness signatures
-wget https://github.com/usbarmory/armory-witness/releases/download/v20201102/armory-witness.sig1
-wget https://github.com/usbarmory/armory-witness/releases/download/v20201102/armory-witness.sig2
+# download armored-witness signatures
+wget https://github.com/transparency-dev/armored-witness-os/releases/download/v20201102/armored-witness-os.sig1
+wget https://github.com/transparency-dev/armored-witness-os/releases/download/v20201102/armored-witness.sig2
 
-# create armory-witness-boot configuration
-armory-witness-image -k armory-witness -1 armory-witness.sig1 -2 armory-witness.sig2 -o armory-witness.bin
+# create armored-witness-boot configuration
+armored-witness-image -k armored-witness-os -1 armored-witness.sig1 -2 armored-witness.sig2 -o armored-witness.bin
 
 # load armory-ums on target
 armory-boot-usb -i armory-ums.imx
@@ -123,10 +123,10 @@ armory-boot-usb -i armory-ums.imx
 # wait for mass storage device detection
 
 # flash bootloader (verify target using `dmesg`)
-dd if=armory-witness-boot.imx of=$TARGET_DEV bs=512 seek=2 conv=fsync
+dd if=armored-witness-boot.imx of=$TARGET_DEV bs=512 seek=2 conv=fsync
 
 # flash configuration+kernel
-dd if=armory-witness.bin of=$TARGET_DEV bs=512 seek=20480 conv=fsync
+dd if=armored-witnes-os.bin of=$TARGET_DEV bs=512 seek=20480 conv=fsync
 ```
 
 ## LED status

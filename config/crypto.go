@@ -24,7 +24,7 @@ import (
 	"github.com/usbarmory/armory-boot/config"
 )
 
-// Verify authenticates the armory-witness-boot configuration hash signatures.
+// Verify authenticates the armored-witness-boot configuration hash signatures.
 func (c *Config) Verify(buf []byte, pubKeys string, quorum int) (err error) {
 	if err = json.Unmarshal([]byte(pubKeys), &c.pubKeys); err != nil {
 		return
@@ -41,10 +41,10 @@ func (c *Config) Verify(buf []byte, pubKeys string, quorum int) (err error) {
 	n := 0
 
 	for i, pubKey := range c.pubKeys {
-		log.Printf("armory-witness-boot: authenticating kernel (%s)", pubKey)
+		log.Printf("armored-witness-boot: authenticating kernel (%s)", pubKey)
 
 		if err = config.Verify(buf, c.Signatures[i], pubKey); err != nil {
-			log.Printf("armory-witness-boot: %s, %v", pubKey, err)
+			log.Printf("armored-witness-boot: %s, %v", pubKey, err)
 			continue
 		}
 

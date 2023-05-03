@@ -69,7 +69,7 @@ func main() {
 
 	usbarmory.LED("blue", true)
 
-	log.Printf("armory-witness-boot: loading configuration at USDHC%d@%d\n", card.Index, config.Offset)
+	log.Printf("armored-witness-boot: loading configuration at USDHC%d@%d\n", card.Index, config.Offset)
 
 	conf, err := storage.Configuration(card, config.Offset, config.MaxLength)
 
@@ -89,7 +89,7 @@ func main() {
 
 	usbarmory.LED("white", true)
 
-	log.Printf("armory-witness-boot: loaded kernel off:%x size:%d", conf.Offset, conf.Size)
+	log.Printf("armored-witness-boot: loaded kernel off:%x size:%d", conf.Offset, conf.Size)
 
 	image := &exec.ELFImage{
 		Region: mem,
@@ -100,7 +100,7 @@ func main() {
 		panic(fmt.Sprintf("load error, %v\n", err))
 	}
 
-	log.Printf("armory-witness-boot: starting kernel@%.8x\n", image.Entry())
+	log.Printf("armored-witness-boot: starting kernel@%.8x\n", image.Entry())
 
 	if err = image.Boot(preLaunch); err != nil {
 		panic(fmt.Sprintf("load error, %v\n", err))

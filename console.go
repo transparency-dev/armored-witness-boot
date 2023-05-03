@@ -26,7 +26,7 @@ import (
 )
 
 func init() {
-	banner := fmt.Sprintf("armory-witness-boot • %s/%s (%s) • %s %s • %s",
+	banner := fmt.Sprintf("armored-witness-boot • %s/%s (%s) • %s %s • %s",
 		runtime.GOOS, runtime.GOARCH, runtime.Version(),
 		Revision, Build,
 		imx6ul.Model())

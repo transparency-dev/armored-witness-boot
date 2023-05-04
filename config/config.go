@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package config provides parsing for the armory-witness-boot configuration
+// Package config provides parsing for the armored-witness-boot configuration
 // file format.
 package config
 
@@ -26,7 +26,7 @@ const (
 	MaxLength = 40960
 )
 
-// Config represents the armory-witness-boot configuration.
+// Config represents the armored-witness-boot configuration.
 type Config struct {
 	// Offset is the MMC/SD card offset to an ELF unikernel image (e.g. TamaGo).
 	Offset int64

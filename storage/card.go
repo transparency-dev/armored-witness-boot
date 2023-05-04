@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package storage provides utilities for reading armory-witness-boot
+// Package storage provides utilities for reading armored-witness-boot
 // configuration and kernel files.
 package storage
 
@@ -22,7 +22,7 @@ import (
 	"github.com/transparency-dev/armored-witness-boot/config"
 )
 
-// Configuration reads an armory-witness-boot configuration data gob from a
+// Configuration reads an armored-witness-boot configuration data gob from a
 // fixed offset on an MMC/SD card.
 func Configuration(card *usdhc.USDHC, offset int64, size int64) (c *config.Config, err error) {
 	buf, err := card.Read(offset, size)

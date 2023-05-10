@@ -2,6 +2,9 @@ name: PR CI
 
 on: [push, pull_request]
 
+permissions:  # added using https://github.com/step-security/secure-repo
+  contents: read
+
 jobs:
   build:
     env:
@@ -13,7 +16,7 @@ jobs:
       OS_PUBLIC_KEY2: /tmp/os2.pub
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
     - name: Install tools
       run: |
         wget -q https://github.com/usbarmory/tamago-go/releases/download/tamago-go${TAMAGO_VERSION}/tamago-go${TAMAGO_VERSION}.linux-amd64.tar.gz

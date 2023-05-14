@@ -15,9 +15,12 @@
 package main
 
 import (
+	"log"
 	_ "unsafe"
 
 	"github.com/usbarmory/tamago/dma"
+	"github.com/usbarmory/tamago/soc/nxp/bee"
+	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
 )
 
 // Override imx6ul.ramStart, usbarmory.ramSize and dma allocation, as the
@@ -48,9 +51,40 @@ const (
 	initrdOffset = 0x08000000
 )
 
+// BEE enables AES CTR encryption for all external RAM, when used the target
+// kernel must be compiled for the aliased memory region.
+const BEE = false
+
+func initRAMEncryption() {
+	if imx6ul.Family != imx6ul.IMX6UL {
+		log.Fatal("could not activate BEE: wrong P/N")
+	}
+
+	// Encrypt 1GB of external RAM, this is the maximum extent either
+	// covered by the BEE or available on USB armory Mk II boards.
+
+	region0 := uint32(imx6ul.MMDC_BASE)
+	region1 := region0 + bee.AliasRegionSize
+
+	if err := imx6ul.BEE.Enable(region0, region1); err != nil {
+		log.Fatalf("could not activate BEE: %v", err)
+	}
+
+	imx6ul.BEE.Lock()
+}
+
 func init() {
+	var start uint
+
 	dma.Init(dmaStart, dmaSize)
 
-	mem, _ = dma.NewRegion(memoryStart, memorySize, false)
+	if BEE && imx6ul.Native {
+		initRAMEncryption()
+		start = bee.AliasRegion0
+	} else {
+		start = memoryStart
+	}
+
+	mem, _ = dma.NewRegion(start, memorySize, false)
 	mem.Reserve(memorySize, 0)
 }

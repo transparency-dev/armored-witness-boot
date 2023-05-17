@@ -8,8 +8,8 @@ github.com/pierrec/lz4/v4 v4.1.14 h1:+fL8AQEZtz/ijeNnpduH0bROTu0O3NZAlPjQxGn8LwE
 github.com/pierrec/lz4/v4 v4.1.14/go.mod h1:gZWDp/Ze/IJXGXf23ltt2EXimqmTUXEy0GFuRQyBid4=
 github.com/u-root/u-root v0.11.0 h1:6gCZLOeRyevw7gbTwMj3fKxnr9+yHFlgF3N7udUVNO8=
 github.com/u-root/u-root v0.11.0/go.mod h1:DBkDtiZyONk9hzVEdB/PWI9B4TxDkElWlVTHseglrZY=
-github.com/usbarmory/armory-boot v0.0.0-20230502083724-7c2a74cb866f h1:4oPw2Dg9c1ZgKOnEVIr1PAOMhmBt9wCu4Zxwt1ihZBs=
-github.com/usbarmory/armory-boot v0.0.0-20230502083724-7c2a74cb866f/go.mod h1:BAYr//sYLQTqBr9Gkl9ugAJxdFMROI56kjuMlBRw610=
+github.com/usbarmory/armory-boot v0.0.0-20230517133225-c9b7b9df283f h1:+Y1M7NrgAowRsqc/HBLSely2P7KMXwDMTzXFH+w89dA=
+github.com/usbarmory/armory-boot v0.0.0-20230517133225-c9b7b9df283f/go.mod h1:BAYr//sYLQTqBr9Gkl9ugAJxdFMROI56kjuMlBRw610=
 github.com/usbarmory/crucible v0.0.0-20230412092556-269c90b0067e h1:6hKgQCr5x22jR8SLQ9W6+X2YitRqBAmfCSuIqYskh4c=
 github.com/usbarmory/crucible v0.0.0-20230412092556-269c90b0067e/go.mod h1:8CtxsBNuSD2E0f23kH74XcHlenwMnn/RmTQ1wn4Lwtw=
 github.com/usbarmory/tamago v0.0.0-20230515203810-9cd3f5151e90 h1:m2l1/C/WcS6AeRhiUHlFmPqYAQi8MBBeeDbYAU9pZZg=

@@ -41,11 +41,9 @@ var (
 func init() {
 	log.SetFlags(0)
 
-	if err := imx6ul.SetARMFreq(900); err != nil {
-		panic(fmt.Sprintf("cannot change ARM frequency, %v\n", err))
+	if imx6ul.Native {
+		imx6ul.SetARMFreq(imx6ul.Freq528)
 	}
-
-	imx6ul.DCP.Init()
 }
 
 func preLaunch() {

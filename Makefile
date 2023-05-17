@@ -15,7 +15,7 @@
 BUILD_USER ?= $(shell whoami)
 BUILD_HOST ?= $(shell hostname)
 BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
-BUILD_TAGS = linkramsize,linkramstart
+BUILD_TAGS = linkramsize,linkramstart,linkprintk
 BUILD = ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
 PUBLIC_KEYS = [\"$(shell test ${OS_PUBLIC_KEY1} && tail -n 1 ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && tail -n 1 ${OS_PUBLIC_KEY2})\"]
@@ -33,7 +33,12 @@ TEXT_START := 0x90010000 # ramStart (defined in imx6/imx6ul/memory.go) + 0x10000
 TAMAGOFLAGS := -tags ${BUILD_TAGS} -trimpath -ldflags "-s -w -T $(TEXT_START) -E _rt0_arm_tamago -R 0x1000 -X 'main.Build=${BUILD}' -X 'main.Revision=${REV}' -X 'main.PublicKeys=${PUBLIC_KEYS}'"
 GOFLAGS := -trimpath -ldflags "-s -w"
 
-.PHONY: clean
+QEMU ?= qemu-system-arm -machine mcimx6ul-evk -cpu cortex-a7 -m 512M \
+        -nographic -monitor none -serial null -serial stdio \
+        -net nic,model=imx.enet,netdev=net0 -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
+        -semihosting
+
+.PHONY: clean qemu
 
 #### primary targets ####
 
@@ -85,6 +90,9 @@ dcd:
 clean:
 	@rm -fr $(APP) $(APP).bin $(APP).imx $(APP)-signed.imx $(APP).csf $(APP).dcd $(CMD)
 
+qemu:
+	$(QEMU) -kernel $(CURDIR)/armored-witness-boot
+
 #### dependencies ####
 
 $(APP): check_tamago check_env
@@ -104,9 +112,6 @@ $(APP).bin: $(APP)
 	    $(APP) -O binary $(APP).bin
 
 $(APP).imx: $(APP).bin $(APP).dcd
-	echo "## disabling TZASC bypass in DCD for pre-DDR initialization ##"; \
-	chmod 644 $(APP).dcd; \
-	echo "DATA 4 0x020e4024 0x00000001  # TZASC_BYPASS" >> $(APP).dcd; \
 	mkimage -n $(APP).dcd -T imximage -e $(TEXT_START) -d $(APP).bin $(APP).imx
 	# Copy entry point from ELF file
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc

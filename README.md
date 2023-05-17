@@ -115,7 +115,7 @@ wget https://github.com/transparency-dev/armored-witness-os/releases/download/v2
 wget https://github.com/transparency-dev/armored-witness-os/releases/download/v20201102/armored-witness.sig2
 
 # create armored-witness-boot configuration
-armored-witness-image -k armored-witness-os -1 armored-witness.sig1 -2 armored-witness.sig2 -o armored-witness.bin
+armored-witness-image -k trusted_os.elf -1 trusted_os.sig1 -2 trusted_os.sig2 -o trusted_os.bin
 
 # load armory-ums on target
 armory-boot-usb -i armory-ums.imx

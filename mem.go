@@ -55,16 +55,14 @@ const (
 // kernel must be compiled for the aliased memory region.
 const BEE = false
 
+// Encrypt 1GB of external RAM, this is the maximum extent either
+// covered by the BEE or available on USB armory Mk II boards.
 func initRAMEncryption() {
-	if imx6ul.Family != imx6ul.IMX6UL {
-		log.Fatal("could not activate BEE: wrong P/N")
-	}
-
-	// Encrypt 1GB of external RAM, this is the maximum extent either
-	// covered by the BEE or available on USB armory Mk II boards.
 
 	region0 := uint32(imx6ul.MMDC_BASE)
 	region1 := region0 + bee.AliasRegionSize
+
+	imx6ul.BEE.Init()
 
 	if err := imx6ul.BEE.Enable(region0, region1); err != nil {
 		log.Fatalf("could not activate BEE: %v", err)
@@ -78,7 +76,7 @@ func init() {
 
 	dma.Init(dmaStart, dmaSize)
 
-	if BEE && imx6ul.Native {
+	if BEE && imx6ul.Native && imx6ul.BEE != nil {
 		initRAMEncryption()
 		start = bee.AliasRegion0
 	} else {

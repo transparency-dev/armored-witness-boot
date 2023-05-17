@@ -58,7 +58,6 @@ const BEE = false
 // Encrypt 1GB of external RAM, this is the maximum extent either
 // covered by the BEE or available on USB armory Mk II boards.
 func initRAMEncryption() {
-
 	region0 := uint32(imx6ul.MMDC_BASE)
 	region1 := region0 + bee.AliasRegionSize
 

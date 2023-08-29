@@ -29,8 +29,8 @@ import (
 )
 
 func init() {
-	switch usbarmory.Model() {
-	case "UA-MKII-β", "UA-MKII-γ":
+	switch model, _ := usbarmory.Model(); model {
+	case usbarmory.BETA, usbarmory.GAMMA:
 		if debugConsole, err := usbarmory.DetectDebugAccessory(250 * time.Millisecond); err == nil {
 			<-debugConsole
 		}

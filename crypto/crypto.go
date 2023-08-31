@@ -14,19 +14,22 @@
 
 //go:build linkramsize
 
-package config
+// crypto contains cryptographic verification support for the bootloader.
+package crypto
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/usbarmory/armory-boot/config"
+	"github.com/transparency-dev/armored-witness-boot/config"
+	abc "github.com/usbarmory/armory-boot/config"
 )
 
 // Verify authenticates the armored-witness-boot configuration hash signatures.
-func (c *Config) Verify(buf []byte, pubKeys string, quorum int) (err error) {
-	if err = json.Unmarshal([]byte(pubKeys), &c.pubKeys); err != nil {
+func VerifyConfig(c config.Config, buf []byte, pubKeysJSON string, quorum int) (err error) {
+	var pubKeys []string
+	if err = json.Unmarshal([]byte(pubKeysJSON), &pubKeys); err != nil {
 		return
 	}
 
@@ -40,10 +43,10 @@ func (c *Config) Verify(buf []byte, pubKeys string, quorum int) (err error) {
 
 	n := 0
 
-	for i, pubKey := range c.pubKeys {
+	for i, pubKey := range pubKeys {
 		log.Printf("armored-witness-boot: authenticating kernel (%s)", pubKey)
 
-		if err = config.Verify(buf, c.Signatures[i], pubKey); err != nil {
+		if err = abc.Verify(buf, c.Signatures[i], pubKey); err != nil {
 			log.Printf("armored-witness-boot: %s, %v", pubKey, err)
 			continue
 		}

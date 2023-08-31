@@ -43,8 +43,6 @@ type Config struct {
 	// Signatures are the unikernel signify/minisign signatures.
 	Signatures [][]byte
 
-	pubKeys []string
-
 	Bundle ProofBundle
 }
 

@@ -26,6 +26,14 @@ const (
 	MaxLength = 40960
 )
 
+// ProofBundle represents a firmware transparency proof bundle.
+type ProofBundle struct {
+	Checkpoint     []byte
+	Manifest       []byte
+	LogIndex       uint64
+	InclusionProof [][]byte
+}
+
 // Config represents the armored-witness-boot configuration.
 type Config struct {
 	// Offset is the MMC/SD card offset to an ELF unikernel image (e.g. TamaGo).
@@ -36,6 +44,8 @@ type Config struct {
 	Signatures [][]byte
 
 	pubKeys []string
+
+	Bundle ProofBundle
 }
 
 // Encode serializes the configuration.

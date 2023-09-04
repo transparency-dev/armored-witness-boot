@@ -28,9 +28,13 @@ const (
 
 // ProofBundle represents a firmware transparency proof bundle.
 type ProofBundle struct {
-	Checkpoint     []byte
-	Manifest       []byte
-	LogIndex       uint64
+	// Checkpoint is a note-formatted checkpoint from a log which contains Manifest, below.
+	Checkpoint []byte
+	// Manifest contains metadata about a firmware release.
+	Manifest []byte
+	// LogIndex is the position within the log where Manifest was included.
+	LogIndex uint64
+	// InclusionProof is a proof for Manifest@Index being committed to by Checkpoint.
 	InclusionProof [][]byte
 }
 
@@ -42,7 +46,8 @@ type Config struct {
 	Size int64
 	// Signatures are the unikernel signify/minisign signatures.
 	Signatures [][]byte
-
+	// Bundle contains firmware transparency artefacts relating to the firmware this config
+	// references.
 	Bundle ProofBundle
 }
 

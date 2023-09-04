@@ -26,6 +26,18 @@ const (
 	MaxLength = 40960
 )
 
+// ProofBundle represents a firmware transparency proof bundle.
+type ProofBundle struct {
+	// Checkpoint is a note-formatted checkpoint from a log which contains Manifest, below.
+	Checkpoint []byte
+	// Manifest contains metadata about a firmware release.
+	Manifest []byte
+	// LogIndex is the position within the log where Manifest was included.
+	LogIndex uint64
+	// InclusionProof is a proof for Manifest@Index being committed to by Checkpoint.
+	InclusionProof [][]byte
+}
+
 // Config represents the armored-witness-boot configuration.
 type Config struct {
 	// Offset is the MMC/SD card offset to an ELF unikernel image (e.g. TamaGo).
@@ -34,8 +46,9 @@ type Config struct {
 	Size int64
 	// Signatures are the unikernel signify/minisign signatures.
 	Signatures [][]byte
-
-	pubKeys []string
+	// Bundle contains firmware transparency artefacts relating to the firmware this config
+	// references.
+	Bundle ProofBundle
 }
 
 // Encode serializes the configuration.

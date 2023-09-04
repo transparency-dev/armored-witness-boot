@@ -24,6 +24,7 @@ import (
 	"github.com/usbarmory/armory-boot/exec"
 
 	"github.com/transparency-dev/armored-witness-boot/config"
+	"github.com/transparency-dev/armored-witness-boot/crypto"
 	"github.com/transparency-dev/armored-witness-boot/storage"
 )
 
@@ -81,7 +82,7 @@ func main() {
 		panic(fmt.Sprintf("kernel read error, %v\n", err))
 	}
 
-	if err = conf.Verify(kernel, PublicKeys, Quorum); err != nil {
+	if err = crypto.VerifyConfig(*conf, kernel, PublicKeys, Quorum); err != nil {
 		panic(fmt.Sprintf("configuration verification error, %v\n", err))
 	}
 

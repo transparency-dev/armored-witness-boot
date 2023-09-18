@@ -18,6 +18,7 @@ import (
 	"log"
 	_ "unsafe"
 
+	"github.com/usbarmory/tamago/arm"
 	"github.com/usbarmory/tamago/dma"
 	"github.com/usbarmory/tamago/soc/nxp/bee"
 	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
@@ -62,12 +63,14 @@ func initRAMEncryption() {
 	region1 := region0 + bee.AliasRegionSize
 
 	imx6ul.BEE.Init()
+	defer imx6ul.BEE.Lock()
 
 	if err := imx6ul.BEE.Enable(region0, region1); err != nil {
 		log.Fatalf("could not activate BEE: %v", err)
 	}
 
-	imx6ul.BEE.Lock()
+	flags := arm.TTE_CACHEABLE | arm.TTE_BUFFERABLE | arm.TTE_SECTION | arm.TTE_AP_001<<10
+	imx6ul.ARM.ConfigureMMU(bee.AliasRegion0, bee.AliasRegion1 + bee.AliasRegionSize, 0, flags)
 }
 
 func init() {

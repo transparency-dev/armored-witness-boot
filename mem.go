@@ -54,7 +54,7 @@ const (
 
 // BEE enables AES CTR encryption for all external RAM, when used the target
 // kernel must be compiled for the aliased memory region.
-const BEE = false
+const BEE = true
 
 // Encrypt 1GB of external RAM, this is the maximum extent either
 // covered by the BEE or available on USB armory Mk II boards.

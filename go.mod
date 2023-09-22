@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/usbarmory/armory-boot v0.0.0-20230922092524-e66d926bc36c
-	github.com/usbarmory/tamago v0.0.0-20230918141454-6bee1977d8c8
+	github.com/usbarmory/tamago v0.0.0-20230922151120-1f76695abebe
 )
 
 require (

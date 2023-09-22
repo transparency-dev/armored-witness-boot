@@ -22,6 +22,10 @@ PUBLIC_KEYS = [\"$(shell test ${OS_PUBLIC_KEY1} && tail -n 1 ${OS_PUBLIC_KEY1})\
 
 SHELL = /bin/bash
 
+ifeq ("${BEE}","1")
+	BUILD_TAGS := ${BUILD_TAGS},bee
+endif
+
 ifeq ("${CONSOLE}","on")
 	BUILD_TAGS := ${BUILD_TAGS},console
 endif

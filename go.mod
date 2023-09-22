@@ -3,7 +3,7 @@ module github.com/transparency-dev/armored-witness-boot
 go 1.20
 
 require (
-	github.com/usbarmory/armory-boot v0.0.0-20230920114238-2e5ec916d8f9
+	github.com/usbarmory/armory-boot v0.0.0-20230922092524-e66d926bc36c
 	github.com/usbarmory/tamago v0.0.0-20230918141454-6bee1977d8c8
 )
 

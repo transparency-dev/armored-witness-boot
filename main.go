@@ -19,6 +19,7 @@ import (
 	"log"
 
 	usbarmory "github.com/usbarmory/tamago/board/usbarmory/mk2"
+	"github.com/usbarmory/tamago/dma"
 	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
 
 	"github.com/usbarmory/armory-boot/exec"
@@ -39,12 +40,20 @@ var (
 	PublicKeys string
 )
 
+// DMA region for target kernel boot
+var mem *dma.Region
+
 func init() {
 	log.SetFlags(0)
 
 	if imx6ul.Native {
 		imx6ul.SetARMFreq(imx6ul.Freq528)
 	}
+
+	dma.Init(dmaStart, dmaSize)
+
+	mem, _ = dma.NewRegion(memoryStart, memorySize, false)
+	mem.Reserve(memorySize, 0)
 }
 
 func preLaunch() {

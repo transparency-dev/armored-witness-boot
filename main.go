@@ -44,6 +44,8 @@ var (
 var mem *dma.Region
 
 func init() {
+	var err error
+
 	log.SetFlags(0)
 
 	if imx6ul.Native {
@@ -52,7 +54,10 @@ func init() {
 
 	dma.Init(dmaStart, dmaSize)
 
-	mem, _ = dma.NewRegion(memoryStart, memorySize, false)
+	if mem, err = dma.NewRegion(memoryStart, memorySize, false); err != nil {
+		panic("could not allocate dma region")
+	}
+
 	mem.Reserve(memorySize, 0)
 }
 

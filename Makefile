@@ -22,6 +22,10 @@ PUBLIC_KEYS = [\"$(shell test ${OS_PUBLIC_KEY1} && tail -n 1 ${OS_PUBLIC_KEY1})\
 
 SHELL = /bin/bash
 
+ifeq ("${BEE}","1")
+	BUILD_TAGS := ${BUILD_TAGS},bee
+endif
+
 ifeq ("${CONSOLE}","on")
 	BUILD_TAGS := ${BUILD_TAGS},console
 endif
@@ -38,7 +42,7 @@ QEMU ?= qemu-system-arm -machine mcimx6ul-evk -cpu cortex-a7 -m 512M \
         -net nic,model=imx.enet,netdev=net0 -netdev tap,id=net0,ifname=tap0,script=no,downscript=no \
         -semihosting
 
-.PHONY: clean qemu
+.PHONY: clean qemu qemu-gdb
 
 #### primary targets ####
 
@@ -90,8 +94,13 @@ dcd:
 clean:
 	@rm -fr $(APP) $(APP).bin $(APP).imx $(APP)-signed.imx $(APP).csf $(APP).dcd $(CMD)
 
-qemu:
+qemu: $(APP)
 	$(QEMU) -kernel $(CURDIR)/armored-witness-boot
+
+qemu-gdb: TAMAGOFLAGS := $(TAMAGOFLAGS:-w=)
+qemu-gdb: TAMAGOFLAGS := $(TAMAGOFLAGS:-s=)
+qemu-gdb: $(APP)
+	$(QEMU) -kernel $(CURDIR)/armored-witness-boot -S -s
 
 #### dependencies ####
 

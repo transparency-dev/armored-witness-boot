@@ -6,9 +6,10 @@ TODO
 
 The following table summarizes currently supported SoCs and boards.
 
-| SoC          | Board                                                                                                                                                                                | SoC package                                                               | Board package                                                                        |
-|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| NXP i.MX6UL  | [USB armory Mk II LAN](https://github.com/usbarmory/usbarmory/wiki)                                                                                                                  | [imx6ul](https://github.com/usbarmory/tamago/tree/master/soc/nxp/imx6ul)  | [usbarmory/mk2](https://github.com/usbarmory/tamago/tree/master/board/usbarmory)      |
+| SoC          | Board                                                               | SoC package                                                              | Board package                                                                    |
+|--------------|---------------------------------------------------------------------|--------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| NXP i.MX6UL  | [USB armory Mk II LAN](https://github.com/usbarmory/usbarmory/wiki) | [imx6ul](https://github.com/usbarmory/tamago/tree/master/soc/nxp/imx6ul) | [usbarmory/mk2](https://github.com/usbarmory/tamago/tree/master/board/usbarmory) |
+| NXP i.MX6ULL | [USB armory Mk II](https://github.com/usbarmory/usbarmory/wiki)     | [imx6ul](https://github.com/usbarmory/tamago/tree/master/soc/nxp/imx6ul) | [usbarmory/mk2](https://github.com/usbarmory/tamago/tree/master/board/usbarmory) |
 
 ## Secure Boot
 
@@ -63,8 +64,11 @@ Example compilation with embedded keys and secure boot:
 
 ```
 git clone https://github.com/transparency-dev/armored-witness-boot && cd armored-witness-boot
-make PUBLIC_KEY1=armored-witness-boot-1.pub PUBLIC_KEY2=armored-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
+make OS_PUBLIC_KEY1=armored-witness-boot-1.pub OS_PUBLIC_KEY2=armored-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
 ```
+
+Only on i.MX6UL P/Ns, `BEE=1` can be set to enable AES CTR encryption for all
+external RAM using TamaGo [bee package](https://pkg.go.dev/github.com/usbarmory/tamago/soc/nxp/bee).
 
 ## Installing
 

@@ -18,6 +18,8 @@ BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart,linkprintk
 BUILD = ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
+DEV_LOG_ORIGIN ?= "DEV.armoredwitness.transparency.dev/${USER}"
+GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>/dev/null || git describe --match 'v*.*.*' --tags 2>/dev/null || git describe --tags 2>/dev/null || echo -n 'v0.0.0+'`git rev-parse HEAD`) | tail -c +2 )
 PUBLIC_KEYS = [\"$(shell test ${OS_PUBLIC_KEY1} && tail -n 1 ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && tail -n 1 ${OS_PUBLIC_KEY2})\"]
 
 SHELL = /bin/bash
@@ -49,8 +51,9 @@ QEMU ?= qemu-system-arm -machine mcimx6ul-evk -cpu cortex-a7 -m 512M \
 all: $(APP)
 
 imx: $(APP).imx
+manifest: $(APP)_manifest
 
-imx_signed: $(APP)-signed.imx
+imx_signed: $(APP)-signed.imx $(APP)_manifest
 
 elf: $(APP)
 
@@ -60,6 +63,46 @@ $(CMD):
 	else \
 		go build $(GOFLAGS) cmd/$(CMD)/*.go; \
 	fi
+
+## log_initialise initialises the log stored under ${LOG_STORAGE_DIR}.
+log_initialise:
+	echo "(Re-)initialising log at ${LOG_STORAGE_DIR}"
+	go run github.com/transparency-dev/serverless-log/cmd/integrate@a56a93b5681e5dc231882ac9de435c21cb340846 \
+		--storage_dir=${LOG_STORAGE_DIR} \
+		--origin=${DEV_LOG_ORIGIN} \
+		--private_key=${LOG_PRIVATE_KEY} \
+		--public_key=${LOG_PUBLIC_KEY} \
+		--initialise
+
+## log_boot adds the manifest.json file created during the build to the dev FT log.
+log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
+log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/boot/$(GIT_SEMVER_TAG)
+log_boot:
+	@if [ "${LOG_PRIVATE_KEY}" == "" -o "${LOG_PUBLIC_KEY}" == "" ]; then \
+		@echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
+		exit 1; \
+	fi
+	@if [ "${DEV_LOG_DIR}" == "" ]; then \
+		@echo "You need to set the DEV_LOG_DIR variable"; \
+		exit 1; \
+	fi
+
+	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
+		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
+	fi
+	go run github.com/transparency-dev/serverless-log/cmd/sequence@a56a93b5681e5dc231882ac9de435c21cb340846 \
+		--storage_dir=${LOG_STORAGE_DIR} \
+		--origin=${DEV_LOG_ORIGIN} \
+		--public_key=${LOG_PUBLIC_KEY} \
+		--entries=${CURDIR}/${APP}_manifest
+	-go run github.com/transparency-dev/serverless-log/cmd/integrate@a56a93b5681e5dc231882ac9de435c21cb340846 \
+		--storage_dir=${LOG_STORAGE_DIR} \
+		--origin=${DEV_LOG_ORIGIN} \
+		--private_key=${LOG_PRIVATE_KEY} \
+		--public_key=${LOG_PUBLIC_KEY}
+	@mkdir -p ${LOG_ARTEFACT_DIR}
+	cp ${CURDIR}/${APP}.imx ${LOG_ARTEFACT_DIR}
+
 
 #### utilities ####
 
@@ -127,6 +170,26 @@ $(APP).imx: $(APP).bin $(APP).dcd
 	mkimage -n $(APP).dcd -T imximage -e $(TEXT_START) -d $(APP).bin $(APP).imx
 	# Copy entry point from ELF file
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc
+
+$(APP)_manifest: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+$(APP)_manifest:
+	@if [ "${APPLET_PRIVATE_KEY}" == "" ]; then \
+		echo 'You need to set the APPLET_PRIVATE_KEY variable to a valid signing key path'; \
+		exit 1; \
+	fi
+
+	# Create manifest
+	@echo ---------- Manifest --------------
+	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
+		create \
+		--git_tag=${GIT_SEMVER_TAG} \
+		--git_commit_fingerprint="${REV}" \
+		--firmware_file=${CURDIR}/$(APP).imx \
+		--firmware_type=BOOTLOADER \
+		--private_key_file=${APPLET_PRIVATE_KEY} \
+		--tamago_version=${TAMAGO_SEMVER} \
+		--output_file=${CURDIR}/${APP}_manifest
+	@echo ----------------------------------
 
 #### secure boot ####
 

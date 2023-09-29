@@ -180,8 +180,7 @@ $(APP)_manifest:
 
 	# Create manifest
 	@echo ---------- Manifest --------------
-	#go run github.com/transparency-dev/armored-witness/cmd/manifest@b0f68ecc82043fc79384f7da7c0d44ffc1811976 \
-	go run github.com/transparency-dev/armored-witness/cmd/manifest \
+	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
 		create \
 		--git_tag=${GIT_SEMVER_TAG} \
 		--git_commit_fingerprint="${REV}" \

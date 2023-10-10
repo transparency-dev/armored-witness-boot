@@ -173,8 +173,8 @@ $(APP).imx: $(APP).bin $(APP).dcd
 
 $(APP)_manifest: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
 $(APP)_manifest:
-	@if [ "${APPLET_PRIVATE_KEY}" == "" ]; then \
-		echo 'You need to set the APPLET_PRIVATE_KEY variable to a valid signing key path'; \
+	@if [ "${BOOT_PRIVATE_KEY}" == "" ]; then \
+		echo 'You need to set the BOOT_PRIVATE_KEY variable to a valid signing key path'; \
 		exit 1; \
 	fi
 
@@ -186,7 +186,7 @@ $(APP)_manifest:
 		--git_commit_fingerprint="${REV}" \
 		--firmware_file=${CURDIR}/$(APP).imx \
 		--firmware_type=BOOTLOADER \
-		--private_key_file=${APPLET_PRIVATE_KEY} \
+		--private_key_file=${BOOT_PRIVATE_KEY} \
 		--tamago_version=${TAMAGO_SEMVER} \
 		--output_file=${CURDIR}/${APP}_manifest
 	@echo ----------------------------------

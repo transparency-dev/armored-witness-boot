@@ -1,4 +1,4 @@
-FROM golang:1.21-bookworm
+FROM golang:1.21.3-bookworm
 
 ARG TAMAGO_VERSION
 ARG ARMORY_UMS_VERSION

@@ -74,10 +74,7 @@ log_initialise:
 		--public_key=${LOG_PUBLIC_KEY} \
 		--initialise
 
-## log_boot adds the manifest.json file created during the build to the dev FT log.
-log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
-log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/boot/$(GIT_SEMVER_TAG)
-log_boot:
+check_log:
 	@if [ "${LOG_PRIVATE_KEY}" == "" -o "${LOG_PUBLIC_KEY}" == "" ]; then \
 		@echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
 		exit 1; \
@@ -86,6 +83,11 @@ log_boot:
 		@echo "You need to set the DEV_LOG_DIR variable"; \
 		exit 1; \
 	fi
+
+## log_boot adds the manifest.json file created during the build to the dev FT log.
+log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
+log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/boot/$(GIT_SEMVER_TAG)
+log_boot: check_log
 
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
 		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
@@ -102,6 +104,44 @@ log_boot:
 		--public_key=${LOG_PUBLIC_KEY}
 	@mkdir -p ${LOG_ARTEFACT_DIR}
 	cp ${CURDIR}/${APP}.imx ${LOG_ARTEFACT_DIR}
+
+
+## log_recovery creates a manifest for a defined version of the armory-ums image, and stores it
+## in the local dev FT log.
+## See https://github.com/usbarmory/armory-ums/releases
+log_recovery: ARMORY_UMS_RELEASE=v20201102
+log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
+log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
+log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/recovery/$(ARMORY_UMS_GIT_TAG)
+log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+log_recovery: check_log
+	docker build -t armory-ums-build -f recovery/Dockerfile --build-arg=TAMAGO_VERSION=${TAMAGO_SEMVER} --build-arg=ARMORY_UMS_VERSION=${ARMORY_UMS_RELEASE}  recovery/
+	$(eval CONTAINER := $(shell docker create armory-ums-build))
+	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx .
+	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx.git-commit .
+	docker rm -v ${CONTAINER}
+	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
+		create \
+		--git_tag=${ARMORY_UMS_GIT_TAG} \
+		--git_commit_fingerprint=$(shell cat armory-ums.imx.git-commit) \
+		--firmware_file=${CURDIR}/armory-ums.imx \
+		--firmware_type=RECOVERY \
+		--private_key_file=${RECOVERY_PRIVATE_KEY} \
+		--tamago_version=${TAMAGO_SEMVER} \
+		--output_file=${CURDIR}/armory-ums_manifest
+
+	go run github.com/transparency-dev/serverless-log/cmd/sequence@a56a93b5681e5dc231882ac9de435c21cb340846 \
+		--storage_dir=${LOG_STORAGE_DIR} \
+		--origin=${DEV_LOG_ORIGIN} \
+		--public_key=${LOG_PUBLIC_KEY} \
+		--entries=${CURDIR}/armory-ums_manifest
+	-go run github.com/transparency-dev/serverless-log/cmd/integrate@a56a93b5681e5dc231882ac9de435c21cb340846 \
+		--storage_dir=${LOG_STORAGE_DIR} \
+		--origin=${DEV_LOG_ORIGIN} \
+		--private_key=${LOG_PRIVATE_KEY} \
+		--public_key=${LOG_PUBLIC_KEY}
+	@mkdir -p ${LOG_ARTEFACT_DIR}
+	cp ${CURDIR}/armory-ums.imx ${LOG_ARTEFACT_DIR}
 
 
 #### utilities ####

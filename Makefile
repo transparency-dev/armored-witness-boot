@@ -135,7 +135,7 @@ dcd:
 	cp -f $(GOMODCACHE)/$(TAMAGO_PKG)/board/usbarmory/mk2/imximage.cfg $(APP).dcd
 
 clean:
-	@rm -fr $(APP) $(APP).bin $(APP).imx $(APP)-signed.imx $(APP).csf $(APP).dcd $(CMD)
+	@rm -fr $(APP) $(APP).bin $(APP).imx $(APP)-signed.imx $(APP).csf $(APP).dcd $(CMD) $(APP)_manifest
 
 qemu: $(APP)
 	$(QEMU) -kernel $(CURDIR)/armored-witness-boot
@@ -172,7 +172,7 @@ $(APP).imx: $(APP).bin $(APP).dcd
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc
 
 $(APP)_manifest: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
-$(APP)_manifest:
+$(APP)_manifest: imx
 	@if [ "${BOOT_PRIVATE_KEY}" == "" ]; then \
 		echo 'You need to set the BOOT_PRIVATE_KEY variable to a valid signing key path'; \
 		exit 1; \

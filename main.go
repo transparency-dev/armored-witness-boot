@@ -15,29 +15,38 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
 	usbarmory "github.com/usbarmory/tamago/board/usbarmory/mk2"
 	"github.com/usbarmory/tamago/dma"
 	"github.com/usbarmory/tamago/soc/nxp/imx6ul"
+	"github.com/usbarmory/tamago/soc/nxp/usdhc"
+	"golang.org/x/mod/sumdb/note"
 
 	"github.com/usbarmory/armory-boot/exec"
 
 	"github.com/transparency-dev/armored-witness-boot/config"
-	"github.com/transparency-dev/armored-witness-boot/crypto"
-	"github.com/transparency-dev/armored-witness-boot/storage"
+	"github.com/transparency-dev/armored-witness-common/release/firmware"
 )
 
-// Quorum defines the number of required authentication signatures for
-// unikernel loading.
-const Quorum = 2
+const (
+	// Quorum defines the number of required authentication signatures for
+	// unikernel loading.
+	Quorum = 2
+
+	expectedBlockSize = 512
+	osConfBlock       = 0x5000
+)
 
 var (
 	Build    string
 	Revision string
 
-	PublicKeys string
+	OSLogOrigin         string
+	OSLogVerifier       string
+	OSManifestVerifiers string
 )
 
 // DMA region for target kernel boot
@@ -66,13 +75,46 @@ func preLaunch() {
 	usbarmory.LED("white", false)
 }
 
+// read reads the firmware bundle for the trusted OS from internal storage, the
+// OS proof bundle is *not* verified by this function.
+func read(card *usdhc.USDHC) (fw *firmware.Bundle, err error) {
+	blockSize := card.Info().BlockSize
+	if blockSize != expectedBlockSize {
+		return nil, fmt.Errorf("h/w invariant error - expected MMC blocksize %d, found %d", expectedBlockSize, blockSize)
+	}
+
+	buf, err := card.Read(osConfBlock*expectedBlockSize, config.MaxLength)
+	if err != nil {
+		return nil, err
+	}
+
+	conf := &config.Config{}
+	if err = conf.Decode(buf); err != nil {
+		return nil, err
+	}
+
+	fw = &firmware.Bundle{
+		Checkpoint:     conf.Bundle.Checkpoint,
+		Index:          conf.Bundle.LogIndex,
+		InclusionProof: conf.Bundle.InclusionProof,
+		Manifest:       conf.Bundle.Manifest,
+	}
+
+	fw.Firmware, err = card.Read(conf.Offset, conf.Size)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to read firmware: %v", err)
+	}
+
+	return fw, nil
+}
+
 func main() {
 	card := usbarmory.MMC
 
 	usbarmory.LED("blue", false)
 	usbarmory.LED("white", false)
 
-	if len(PublicKeys) == 0 {
+	if len(OSManifestVerifiers) == 0 {
 		panic("missing public keys, aborting")
 	}
 
@@ -82,31 +124,39 @@ func main() {
 
 	usbarmory.LED("blue", true)
 
+	logVerifier, err := note.NewVerifier(OSLogVerifier)
+	if err != nil {
+		log.Fatalf("Invalid OSLogVerifier: %v", err)
+	}
+	log.Printf("armored-witness-boot: log verifier: %s", logVerifier.Name())
+
+	manifestVerifiers, err := manifestVerifiers()
+	if err != nil {
+		log.Fatalf("Invalid OSManifestVerifiers: %v", err)
+	}
+
 	log.Printf("armored-witness-boot: loading configuration at USDHC%d@%d\n", card.Index, config.Offset)
-
-	conf, err := storage.Configuration(card, config.Offset, config.MaxLength)
-
+	os, err := read(card)
 	if err != nil {
-		panic(fmt.Sprintf("configuration read error, %v\n", err))
+		panic(fmt.Sprintf("Failed to read OS firmware bundle: %v", err))
 	}
 
-	kernel, err := card.Read(conf.Offset, conf.Size)
-
-	if err != nil {
-		panic(fmt.Sprintf("kernel read error, %v\n", err))
+	bv := &firmware.BundleVerifier{
+		LogOrigin:         OSLogOrigin,
+		LogVerifer:        logVerifier,
+		ManifestVerifiers: manifestVerifiers,
 	}
-
-	if err = crypto.VerifyConfig(*conf, kernel, PublicKeys, Quorum); err != nil {
-		panic(fmt.Sprintf("configuration verification error, %v\n", err))
+	if err := bv.Verify(*os); err != nil {
+		log.Fatalf("armored-witness-boot: kernel verification error, %v", err)
 	}
 
 	usbarmory.LED("white", true)
 
-	log.Printf("armored-witness-boot: loaded kernel off:%x size:%d", conf.Offset, conf.Size)
+	log.Print("armored-witness-boot: loaded kernel")
 
 	image := &exec.ELFImage{
 		Region: mem,
-		ELF:    kernel,
+		ELF:    os.Firmware,
 	}
 
 	if err = image.Load(); err != nil {
@@ -118,4 +168,25 @@ func main() {
 	if err = image.Boot(preLaunch); err != nil {
 		panic(fmt.Sprintf("load error, %v\n", err))
 	}
+}
+
+func manifestVerifiers() ([]note.Verifier, error) {
+	var manifestKeys []string
+	if err := json.Unmarshal([]byte(OSManifestVerifiers), &manifestKeys); err != nil {
+		return nil, fmt.Errorf("invalid OSManifestVerifiers format: %v", err)
+	}
+	manifestVerifiers := []note.Verifier{}
+	for _, v := range manifestKeys {
+		mv, err := note.NewVerifier(v)
+		if err != nil {
+			return nil, fmt.Errorf("invalid OSManifestVerifier %q: %v", v, err)
+		}
+		manifestVerifiers = append(manifestVerifiers, mv)
+		log.Printf("armored-witness-boot: kernel verifier: %v", v)
+	}
+	if l := len(manifestVerifiers); l != Quorum {
+		return nil, fmt.Errorf("insufficient number of kernel manifest verifiers %d, need quorum of %d", l, Quorum)
+	}
+
+	return manifestVerifiers, nil
 }

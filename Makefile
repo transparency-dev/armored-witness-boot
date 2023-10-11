@@ -88,7 +88,6 @@ check_log:
 log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/boot/$(GIT_SEMVER_TAG)
 log_boot: check_log
-
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
 		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
 	fi
@@ -115,6 +114,10 @@ log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/recovery/$(ARMORY_UMS_GIT_TAG)
 log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
 log_recovery: check_log
+	@if [ "${RECOVERY_PRIVATE_KEY}" == "" ]; then \
+		@echo "You need to set RECOVERY_PRIVATE_KEY variable"; \
+		exit 1; \
+	fi
 	docker build -t armory-ums-build -f recovery/Dockerfile --build-arg=TAMAGO_VERSION=${TAMAGO_SEMVER} --build-arg=ARMORY_UMS_VERSION=${ARMORY_UMS_RELEASE}  recovery/
 	$(eval CONTAINER := $(shell docker create armory-ums-build))
 	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx .

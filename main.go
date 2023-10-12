@@ -15,6 +15,8 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -29,6 +31,7 @@ import (
 
 	"github.com/transparency-dev/armored-witness-boot/config"
 	"github.com/transparency-dev/armored-witness-common/release/firmware"
+	"github.com/transparency-dev/armored-witness-common/release/firmware/ftlog"
 )
 
 const (
@@ -124,21 +127,21 @@ func main() {
 
 	usbarmory.LED("blue", true)
 
-	logVerifier, err := note.NewVerifier(OSLogVerifier)
-	if err != nil {
-		panic(fmt.Sprintf("armored-witness-boot: Invalid OSLogVerifier: %v", err))
-	}
-	log.Printf("armored-witness-boot: log verifier: %s", logVerifier.Name())
-
-	manifestVerifiers, err := manifestVerifiers()
-	if err != nil {
-		panic(fmt.Sprintf("armored-witness-boot: Invalid OSManifestVerifiers: %v", err))
-	}
-
 	log.Printf("armored-witness-boot: loading configuration & kernel at USDHC%d@%d\n", card.Index, config.Offset)
 	os, err := read(card)
 	if err != nil {
 		panic(fmt.Sprintf("armored-witness-boot: Failed to read OS firmware bundle: %v", err))
+	}
+
+	logVerifier, err := note.NewVerifier(OSLogVerifier)
+	if err != nil {
+		panic(fmt.Sprintf("armored-witness-boot: Invalid OSLogVerifier: %v", err))
+	}
+	log.Printf("armored-witness-boot: log verifier: %s", OSLogVerifier)
+
+	manifestVerifiers, err := manifestVerifiers()
+	if err != nil {
+		panic(fmt.Sprintf("armored-witness-boot: Invalid OSManifestVerifiers: %v", err))
 	}
 
 	bv := &firmware.BundleVerifier{
@@ -148,6 +151,24 @@ func main() {
 	}
 	if err := bv.Verify(*os); err != nil {
 		panic(fmt.Sprintf("armored-witness-boot: kernel verification error, %v", err))
+	}
+
+	// For reference, this is how we'd fall back to verifying signatures only.
+	if false {
+		n, err := note.Open(os.Manifest, note.VerifierList(manifestVerifiers...))
+		if err != nil {
+			panic(fmt.Sprintf("armored-witness-boot: kernel verification error, Open: %v", err))
+		}
+		relManifest := ftlog.FirmwareRelease{}
+		if err := json.Unmarshal([]byte(n.Text), &relManifest); err != nil {
+			panic(fmt.Sprintf("armored-witness-boot: kernel verification error, invalid manifest: %v", err))
+		}
+		if got, want := len(n.Sigs), len(manifestVerifiers); got < want {
+			panic(fmt.Sprintf("armored-witness-boot: kernel verification error, quorum not met (%d < %d)", got, want))
+		}
+		if fwHash, mHash := sha256.Sum256(os.Firmware), relManifest.FirmwareDigestSha256; !bytes.Equal(fwHash[:], mHash) {
+			panic("armored-witness-boot: kernel verification error, firmware hash != manifest hash")
+		}
 	}
 
 	usbarmory.LED("white", true)

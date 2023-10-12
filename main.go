@@ -115,30 +115,30 @@ func main() {
 	usbarmory.LED("white", false)
 
 	if len(OSManifestVerifiers) == 0 {
-		panic("missing public keys, aborting")
+		panic("armored-witness-boot: missing public keys, aborting")
 	}
 
 	if err := card.Detect(); err != nil {
-		panic(fmt.Sprintf("boot media error, %v\n", err))
+		panic(fmt.Sprintf("armored-witness-boot: boot media error, %v\n", err))
 	}
 
 	usbarmory.LED("blue", true)
 
 	logVerifier, err := note.NewVerifier(OSLogVerifier)
 	if err != nil {
-		log.Fatalf("Invalid OSLogVerifier: %v", err)
+		panic(fmt.Sprintf("armored-witness-boot: Invalid OSLogVerifier: %v", err))
 	}
 	log.Printf("armored-witness-boot: log verifier: %s", logVerifier.Name())
 
 	manifestVerifiers, err := manifestVerifiers()
 	if err != nil {
-		log.Fatalf("Invalid OSManifestVerifiers: %v", err)
+		panic(fmt.Sprintf("armored-witness-boot: Invalid OSManifestVerifiers: %v", err))
 	}
 
-	log.Printf("armored-witness-boot: loading configuration at USDHC%d@%d\n", card.Index, config.Offset)
+	log.Printf("armored-witness-boot: loading configuration & kernel at USDHC%d@%d\n", card.Index, config.Offset)
 	os, err := read(card)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to read OS firmware bundle: %v", err))
+		panic(fmt.Sprintf("armored-witness-boot: Failed to read OS firmware bundle: %v", err))
 	}
 
 	bv := &firmware.BundleVerifier{
@@ -147,12 +147,12 @@ func main() {
 		ManifestVerifiers: manifestVerifiers,
 	}
 	if err := bv.Verify(*os); err != nil {
-		log.Fatalf("armored-witness-boot: kernel verification error, %v", err)
+		panic(fmt.Sprintf("armored-witness-boot: kernel verification error, %v", err))
 	}
 
 	usbarmory.LED("white", true)
 
-	log.Print("armored-witness-boot: loaded kernel")
+	log.Print("armored-witness-boot: verified kernel")
 
 	image := &exec.ELFImage{
 		Region: mem,
@@ -166,7 +166,7 @@ func main() {
 	log.Printf("armored-witness-boot: starting kernel@%.8x\n", image.Entry())
 
 	if err = image.Boot(preLaunch); err != nil {
-		panic(fmt.Sprintf("load error, %v\n", err))
+		panic(fmt.Sprintf("armored-witness-boot: load error, %v\n", err))
 	}
 }
 

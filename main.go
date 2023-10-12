@@ -83,7 +83,7 @@ func preLaunch() {
 func read(card *usdhc.USDHC) (fw *firmware.Bundle, err error) {
 	blockSize := card.Info().BlockSize
 	if blockSize != expectedBlockSize {
-		return nil, fmt.Errorf("h/w invariant error - expected MMC blocksize %d, found %d", expectedBlockSize, blockSize)
+		return nil, fmt.Errorf("h/w invariant error - got MMC blocksize %d, want %d", blockSize, expectedBlockSize)
 	}
 
 	buf, err := card.Read(osConfBlock*expectedBlockSize, config.MaxLength)
@@ -105,7 +105,7 @@ func read(card *usdhc.USDHC) (fw *firmware.Bundle, err error) {
 
 	fw.Firmware, err = card.Read(conf.Offset, conf.Size)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read firmware: %v", err)
+		return nil, fmt.Errorf("failed to read firmware: %v", err)
 	}
 
 	return fw, nil
@@ -196,7 +196,7 @@ func manifestVerifiers() ([]note.Verifier, error) {
 	if err := json.Unmarshal([]byte(OSManifestVerifiers), &manifestKeys); err != nil {
 		return nil, fmt.Errorf("invalid OSManifestVerifiers format: %v", err)
 	}
-	manifestVerifiers := []note.Verifier{}
+	manifestVerifiers := make([]note.Verifier, 0, len(manifestKeys))
 	for _, v := range manifestKeys {
 		mv, err := note.NewVerifier(v)
 		if err != nil {

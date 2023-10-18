@@ -84,6 +84,19 @@ git clone https://github.com/transparency-dev/armored-witness-boot && cd armored
 make OS_PUBLIC_KEY1=armored-witness-boot-1.pub OS_PUBLIC_KEY2=armored-witness-boot-2.pub HAB_KEYS=sb_keys imx_signed
 ```
 
+### Logging the Recovery image
+
+The `Makefile` has support for fetching and logging a released version of the armory-ums
+recovery image, too.
+
+Note that this uses `docker` under the covers.
+
+Run:
+
+```bash
+make log_recovery
+```
+
 ### Encrypted RAM support
 
 Only on i.MX6UL P/Ns, `BEE=1` can be set to enable AES CTR encryption for all

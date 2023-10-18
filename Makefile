@@ -114,8 +114,8 @@ log_boot: check_log
 ## log_recovery creates a manifest for a defined version of the armory-ums image, and stores it
 ## in the local dev FT log.
 ## See https://github.com/usbarmory/armory-ums/releases
-log_recovery: ARMORY_UMS_RELEASE=master
-log_recovery: ARMORY_UMS_GIT_TAG="0.0.0+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
+log_recovery: ARMORY_UMS_RELEASE=v20231018
+log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/recovery/$(ARMORY_UMS_GIT_TAG)
 log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')

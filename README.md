@@ -44,17 +44,8 @@ $ go run github.com/transparency-dev/serverless-log/cmd/generate_keys@HEAD \
 
 ## Compiling
 
-### Building the compiler
-
-Build the [TamaGo compiler](https://github.com/usbarmory/tamago-go)
-(or use the [latest binary release](https://github.com/usbarmory/tamago-go/releases/latest)):
-
-```bash
-wget https://github.com/usbarmory/tamago-go/archive/refs/tags/latest.zip
-unzip latest.zip
-cd tamago-go-latest/src && ./all.bash
-cd ../bin && export TAMAGO=`pwd`/go
-```
+Download and install the
+[latest TamaGo binary release](https://github.com/usbarmory/tamago-go/releases/latest).
 
 ### Building the bootloader
 
@@ -70,14 +61,18 @@ Ensure the following environment variables are set:
 | `LOG_PRIVATE_KEY`   | Path to log signing key. Used by Makefile to add the new bootloader firmware to the local dev log.
 | `DEV_LOG_DIR`       | Path to directory in which to store the dev FT log files.
 
-Example compilation with embedded keys, ready for installation with the `provision` tool:
+#### Example compilation with embedded keys, ready for installation with the `provision` tool
 
 ```bash
 # Variables as above already exported.
 make imx manifest log_boot
 ```
 
-Example compilation with embedded keys and secure boot:
+The bootloader executable, `armored-witness-boot.imx`, is created in the current directory.
+
+Firmware transparency artefacts will be written into `${DEV_LOG_DIR}`.
+
+#### Example compilation with embedded keys and secure boot
 
 ```bash
 git clone https://github.com/transparency-dev/armored-witness-boot && cd armored-witness-boot

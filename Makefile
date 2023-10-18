@@ -129,6 +129,10 @@ log_recovery: check_log
 	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx .
 	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx.git-commit .
 	docker rm -v ${CONTAINER}
+
+	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
+		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
+	fi
 	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
 		create \
 		--git_tag=${ARMORY_UMS_GIT_TAG} \

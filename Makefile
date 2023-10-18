@@ -114,8 +114,8 @@ log_boot: check_log
 ## log_recovery creates a manifest for a defined version of the armory-ums image, and stores it
 ## in the local dev FT log.
 ## See https://github.com/usbarmory/armory-ums/releases
-log_recovery: ARMORY_UMS_RELEASE=master
-log_recovery: ARMORY_UMS_GIT_TAG="0.0.0+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
+log_recovery: ARMORY_UMS_RELEASE=v20231018
+log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/recovery/$(ARMORY_UMS_GIT_TAG)
 log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
@@ -129,6 +129,10 @@ log_recovery: check_log
 	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx .
 	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx.git-commit .
 	docker rm -v ${CONTAINER}
+
+	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
+		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
+	fi
 	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
 		create \
 		--git_tag=${ARMORY_UMS_GIT_TAG} \

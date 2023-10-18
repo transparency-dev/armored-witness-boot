@@ -30,7 +30,7 @@ All ArmoredWitness firmware artefacts need to be added to a firmware transparenc
 including the bootloader.
 
 The provided `Makefile` has support for maintaining a local firmware transparency
-log on disk. This is primarily intended to be used for development only.
+log on disk. This is intended to be used for development only.
 
 In order to use this functionality, a log key pair can be generated with the
 following command:
@@ -68,6 +68,7 @@ Ensure the following environment variables are set:
 | `LOG_PUBLIC_KEY`    | Path to log verification key. Embedded into the bootloader to verify at run-time that the OS is correctly logged.
 | `LOG_ORIGIN`        | FT log origin string. Embedded into the bootloader to verify OS firmware transparency.
 | `LOG_PRIVATE_KEY`   | Path to log signing key. Used by Makefile to add the new bootloader firmware to the local dev log.
+| `DEV_LOG_DIR`       | Path to directory in which to store the dev FT log files.
 
 Example compilation with embedded keys, ready for installation with the `provision` tool:
 

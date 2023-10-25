@@ -46,6 +46,7 @@ const (
 var (
 	Build    string
 	Revision string
+	Version  string
 
 	OSLogOrigin         string
 	OSLogVerifier       string
@@ -116,6 +117,7 @@ func main() {
 
 	usbarmory.LED("blue", false)
 	usbarmory.LED("white", false)
+	log.Printf("armored-witness-boot: version %v", Version)
 
 	if len(OSManifestVerifiers) == 0 {
 		panic("armored-witness-boot: missing public keys, aborting")
@@ -149,9 +151,11 @@ func main() {
 		LogVerifer:        logVerifier,
 		ManifestVerifiers: manifestVerifiers,
 	}
-	if err := bv.Verify(*os); err != nil {
+	manifest, err := bv.Verify(*os)
+	if err != nil {
 		panic(fmt.Sprintf("armored-witness-boot: kernel verification error, %v", err))
 	}
+	log.Printf("armored-witness-boot: loaded kernel version %v", manifest.GitTagName)
 
 	// For reference, this is how we'd fall back to verifying signatures only.
 	if false {

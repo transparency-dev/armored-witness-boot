@@ -93,7 +93,8 @@ check_log:
 
 ## log_boot adds the manifest.json file created during the build to the dev FT log.
 log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
-log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/boot/$(GIT_SEMVER_TAG)
+log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)
+log_boot: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/${APP}.imx | cut -f1 -d" ")
 log_boot: check_log
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
 		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
@@ -109,7 +110,7 @@ log_boot: check_log
 		--private_key=${LOG_PRIVATE_KEY} \
 		--public_key=${LOG_PUBLIC_KEY}
 	@mkdir -p ${LOG_ARTEFACT_DIR}
-	cp ${CURDIR}/${APP}.imx ${LOG_ARTEFACT_DIR}
+	cp ${CURDIR}/${APP}.imx ${LOG_ARTEFACT_DIR}/${ARTEFACT_HASH}
 
 
 ## log_recovery creates a manifest for a defined version of the armory-ums image, and stores it
@@ -118,8 +119,9 @@ log_boot: check_log
 log_recovery: ARMORY_UMS_RELEASE=v20231018
 log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
-log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/recovery/$(ARMORY_UMS_GIT_TAG)
+log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)
 log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+log_recovery: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/armory-ums.imx | cut -f1 -d" ")
 log_recovery: check_log
 	@if [ "${RECOVERY_PRIVATE_KEY}" == "" ]; then \
 		@echo "You need to set RECOVERY_PRIVATE_KEY variable"; \
@@ -155,7 +157,7 @@ log_recovery: check_log
 		--private_key=${LOG_PRIVATE_KEY} \
 		--public_key=${LOG_PUBLIC_KEY}
 	@mkdir -p ${LOG_ARTEFACT_DIR}
-	cp ${CURDIR}/armory-ums.imx ${LOG_ARTEFACT_DIR}
+	cp ${CURDIR}/armory-ums.imx ${LOG_ARTEFACT_DIR}/${ARTEFACT_HASH}
 
 
 #### utilities ####

@@ -93,7 +93,7 @@ check_log:
 
 ## log_boot adds the manifest.json file created during the build to the dev FT log.
 log_boot: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
-log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)
+log_boot: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/artefacts
 log_boot: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/${APP}.imx | cut -f1 -d" ")
 log_boot: check_log
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
@@ -119,7 +119,7 @@ log_boot: check_log
 log_recovery: ARMORY_UMS_RELEASE=v20231018
 log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
-log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)
+log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/artefacts
 log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
 log_recovery: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/armory-ums.imx | cut -f1 -d" ")
 log_recovery: check_log

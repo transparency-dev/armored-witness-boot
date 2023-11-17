@@ -128,10 +128,10 @@ log_recovery: check_log
 		exit 1; \
 	fi
 	docker build -t armory-ums-build -f recovery/Dockerfile --build-arg=TAMAGO_VERSION=${TAMAGO_SEMVER} --build-arg=ARMORY_UMS_VERSION=${ARMORY_UMS_RELEASE}  recovery/
-	$(eval CONTAINER := $(shell docker create armory-ums-build))
-	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx .
-	docker cp ${CONTAINER}:/build/armory-ums/armory-ums.imx.git-commit .
-	docker rm -v ${CONTAINER}
+	docker create --name au-build armory-ums-build
+	docker cp au-build:/build/armory-ums/armory-ums.imx .
+	docker cp au-build:/build/armory-ums/armory-ums.imx.git-commit .
+	docker rm -v au-build
 
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
 		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \

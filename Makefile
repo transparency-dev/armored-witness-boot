@@ -24,6 +24,9 @@ GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>
 LOG_VERIFIER = $(shell test ${LOG_PUBLIC_KEY} && cat ${LOG_PUBLIC_KEY})
 OS_VERIFIERS = [\"$(shell test ${OS_PUBLIC_KEY1} && cat ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && cat ${OS_PUBLIC_KEY2})\"]
 
+TAMAGO_SEMVER = $(shell [ -n "${TAMAGO}" -a -x "${TAMAGO}" ] && ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+MINIMUM_TAMAGO_VERSION=1.21.3
+
 SHELL = /bin/bash
 
 ifeq ("${BEE}","1")
@@ -177,6 +180,10 @@ check_tamago:
 		echo 'You need to set the TAMAGO variable to a compiled version of https://github.com/usbarmory/tamago-go'; \
 		exit 1; \
 	fi
+	@if [ "$(shell printf '%s\n' ${MINIMUM_TAMAGO_VERSION} ${TAMAGO_SEMVER} | sort -V | head -n1 )" != "${MINIMUM_TAMAGO_VERSION}" ]; then \
+		echo "You need TamaGo >= ${MINIMUM_TAMAGO_VERSION}, found ${TAMAGO_SEMVER}" ; \
+		exit 1; \
+	fi
 
 check_hab_keys:
 	@if [ "${HAB_KEYS}" == "" ]; then \
@@ -227,7 +234,6 @@ $(APP).imx: $(APP).bin $(APP).dcd
 	# Copy entry point from ELF file
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc
 
-$(APP)_manifest: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
 $(APP)_manifest: imx
 	@if [ "${BOOT_PRIVATE_KEY}" == "" ]; then \
 		echo 'You need to set the BOOT_PRIVATE_KEY variable to a valid signing key path'; \

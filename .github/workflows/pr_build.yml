@@ -8,7 +8,7 @@ permissions:  # added using https://github.com/step-security/secure-repo
 jobs:
   build:
     env:
-      TAMAGO_VERSION: 1.20.6
+      TAMAGO_VERSION: 1.21.3
       TAMAGO: /usr/local/tamago-go/bin/go
       OS_PRIVATE_KEY1: /tmp/os1.sec
       OS_PUBLIC_KEY1: /tmp/os1.pub

@@ -142,7 +142,7 @@ log_recovery: check_log
 	go run github.com/transparency-dev/armored-witness/cmd/manifest@228f2f6432babe1f1657e150ce0ca4a96ab394da \
 		create \
 		--git_tag=${ARMORY_UMS_GIT_TAG} \
-		--git_commit_fingerprint=$(shell cat armory-ums.imx.git-commit) \
+		--git_commit_fingerprint=$$(cat armory-ums.imx.git-commit) \
 		--firmware_file=${CURDIR}/armory-ums.imx \
 		--firmware_type=RECOVERY \
 		--private_key_file=${RECOVERY_PRIVATE_KEY} \

@@ -130,7 +130,7 @@ log_recovery: check_log
 		@echo "You need to set RECOVERY_PRIVATE_KEY variable"; \
 		exit 1; \
 	fi
-	docker build -t armory-ums-build -f recovery/Dockerfile --build-arg=TAMAGO_VERSION=${TAMAGO_SEMVER} --build-arg=ARMORY_UMS_VERSION=${ARMORY_UMS_RELEASE}  recovery/
+	docker build -t armory-ums-build -f recovery/Dockerfile --build-arg=TAMAGO_VERSION=${TAMAGO_SEMVER} --build-arg=ARMORY_UMS_VERSION=${ARMORY_UMS_RELEASE} --network=host  recovery/
 	docker create --name au-build armory-ums-build
 	docker cp au-build:/build/armory-ums/armory-ums.imx .
 	docker cp au-build:/build/armory-ums/armory-ums.imx.git-commit .

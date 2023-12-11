@@ -19,7 +19,6 @@ BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart,linkprintk
 BUILD = ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
-LOG_ORIGIN ?= "DEV.armoredwitness.transparency.dev/${USER}"
 GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>/dev/null || git describe --match 'v*.*.*' --tags 2>/dev/null || git describe --tags 2>/dev/null || echo -n v0.0.${BUILD_EPOCH}+`git rev-parse HEAD`) | tail -c +2 )
 LOG_VERIFIER = $(shell test ${LOG_PUBLIC_KEY} && cat ${LOG_PUBLIC_KEY})
 OS_VERIFIERS = [\"$(shell test ${OS_PUBLIC_KEY1} && cat ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && cat ${OS_PUBLIC_KEY2})\"]
@@ -166,12 +165,20 @@ log_recovery: check_log
 #### utilities ####
 
 check_env:
+	@if [ "${LOG_ORIGIN}" == "" ]; then \
+		echo 'You need to set the LOG_ORIGIN variable'; \
+		exit 1; \
+	fi
+	@if [ "${LOG_PUBLIC_KEY}" == "" ] || [ ! -f "${LOG_PUBLIC_KEY}" ]; then \
+		echo 'You need to set the LOG_PUBLIC_KEY variable to a valid note verifier key path'; \
+		exit 1; \
+	fi
 	@if [ "${OS_PUBLIC_KEY1}" == "" ] || [ ! -f "${OS_PUBLIC_KEY1}" ]; then \
-		echo 'You need to set the OS_PUBLIC_KEY1 variable to a valid authentication key path'; \
+		echo 'You need to set the OS_PUBLIC_KEY1 variable to a valid note verifier key path'; \
 		exit 1; \
 	fi
 	@if [ "${OS_PUBLIC_KEY2}" == "" ] || [ ! -f "${OS_PUBLIC_KEY2}" ]; then \
-		echo 'You need to set the OS_PUBLIC_KEY2 variable to a valid authentication key path'; \
+		echo 'You need to set the OS_PUBLIC_KEY2 variable to a valid note verifier key path'; \
 		exit 1; \
 	fi
 

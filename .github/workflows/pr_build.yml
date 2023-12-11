@@ -10,6 +10,9 @@ jobs:
     env:
       TAMAGO_VERSION: 1.21.3
       TAMAGO: /usr/local/tamago-go/bin/go
+      LOG_ORIGIN: TEST-LOG
+      LOG_PRIVATE_KEY: /tmp/log.sec
+      LOG_PUBLIC_KEY: /tmp/log.pub
       OS_PRIVATE_KEY1: /tmp/os1.sec
       OS_PUBLIC_KEY1: /tmp/os1.pub
       OS_PRIVATE_KEY2: /tmp/os2.sec
@@ -21,11 +24,11 @@ jobs:
       run: |
         wget -q https://github.com/usbarmory/tamago-go/releases/download/tamago-go${TAMAGO_VERSION}/tamago-go${TAMAGO_VERSION}.linux-amd64.tar.gz
         sudo tar -xf tamago-go${TAMAGO_VERSION}.linux-amd64.tar.gz -C /
-        sudo apt install signify-openbsd
     - name: Create throwaway keys
       run: |
-        signify-openbsd -G -n -p ${OS_PUBLIC_KEY1} -s ${OS_PRIVATE_KEY1}
-        signify-openbsd -G -n -p ${OS_PUBLIC_KEY2} -s ${OS_PRIVATE_KEY2}
+        go run github.com/transparency-dev/serverless-log/cmd/generate_keys@HEAD --key_name="DEV-LOG" --out_priv=${LOG_PRIVATE_KEY} --out_pub=${LOG_PUBLIC_KEY}
+        go run github.com/transparency-dev/serverless-log/cmd/generate_keys@HEAD --key_name="DEV-OS1" --out_priv=${OS_PRIVATE_KEY1} --out_pub=${OS_PUBLIC_KEY1}
+        go run github.com/transparency-dev/serverless-log/cmd/generate_keys@HEAD --key_name="DEV-OS2" --out_priv=${OS_PRIVATE_KEY2} --out_pub=${OS_PUBLIC_KEY2}
     - name: Make
       run: |
         DEBUG=1 make

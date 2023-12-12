@@ -10,7 +10,7 @@ jobs:
     env:
       TAMAGO_VERSION: 1.21.3
       TAMAGO: /usr/local/tamago-go/bin/go
-      LOG_ORIGIN: TEST-LOG
+      LOG_ORIGIN: throwaway.transparency.dev/armored-witness-boot/pr-build/0
       LOG_PRIVATE_KEY: /tmp/log.sec
       LOG_PUBLIC_KEY: /tmp/log.pub
       OS_PRIVATE_KEY1: /tmp/os1.sec

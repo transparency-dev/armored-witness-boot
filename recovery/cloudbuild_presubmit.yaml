@@ -1,0 +1,71 @@
+steps:
+  ### Build the recovery binary and upload it to GCS.
+  # Build an image containing the trusted applet artifacts with the Dockerfile.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - TAMAGO_VERSION=${_TAMAGO_VERSION}
+      - --build-arg
+      - ARMORY_UMS_VERSION=${_ARMORY_UMS_VERSION}
+      - -t
+      - builder-image
+      - recovery
+  # Prepare a container with a copy of the artifacts.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - create
+      - --name
+      - builder_scratch
+      - builder-image
+  # Copy the artifacts from the container to the Cloud Build VM.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - cp
+      - builder_scratch:/build/armory-ums
+      - output
+  # List the artifacts.
+  - name: bash
+    args:
+      - ls
+      - output
+  ### Construct log entry / Claimant Model statement.
+  # This step needs to be a bash script in order to substitute the fake take
+  # in the command args.
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/transparency-dev/armored-witness/cmd/manifest@${_ARMORED_WITNESS_REPO_VERSION} \
+          create \
+          --git_tag=${_MANUAL_TAG} \
+          --git_commit_fingerprint=$(cat output/armory-ums.imx.git-commit) \
+          --firmware_file=output/armory-ums.imx \
+          --firmware_type=RECOVERY \
+          --tamago_version=${_TAMAGO_VERSION} \
+          --raw \
+          --output_file=output/recovery_manifest_unsigned.json
+  # Sign the log entry.
+  - name: golang
+    args:
+      - go
+      - run
+      - github.com/transparency-dev/armored-witness/cmd/sign@${_ARMORED_WITNESS_REPO_VERSION}
+      - --project_name=${PROJECT_ID}
+      - --release=ci
+      - --artefact=recovery
+      - --manifest_file=output/recovery_manifest_unsigned.json
+      - --output_file=output/recovery_manifest
+  # Print the content of the signed manifest.
+  - name: bash
+    args:
+      - cat
+      - output/recovery_manifest
+substitutions:
+  # Build-related.
+  _ARMORY_UMS_VERSION: v20231018
+  _MANUAL_TAG: 0.0.0
+  _TAMAGO_VERSION: '1.21.3'
+  # Log-related.
+  _ARMORED_WITNESS_REPO_VERSION: d37d6b19ec4dbd1cad3586ae8ba3ec913829d718

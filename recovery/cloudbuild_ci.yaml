@@ -1,0 +1,144 @@
+steps:
+  ### Build the recovery binary and upload it to GCS.
+  # Build an image containing the trusted applet artifacts with the Dockerfile.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - TAMAGO_VERSION=${_TAMAGO_VERSION}
+      - --build-arg
+      - ARMORY_UMS_VERSION=${_ARMORY_UMS_VERSION}
+      - -t
+      - builder-image
+      - recovery
+  # Prepare a container with a copy of the artifacts.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - create
+      - --name
+      - builder_scratch
+      - builder-image
+  # Copy the artifacts from the container to the Cloud Build VM.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - cp
+      - builder_scratch:/build/armory-ums
+      - output
+  # List the artifacts.
+  - name: bash
+    args:
+      - ls
+      - output
+  # Copy the artifacts from the Cloud Build VM to GCS.
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud storage cp \
+          output/armory-ums.imx \
+          gs://${_FIRMWARE_BUCKET}/$(sha256sum output/armory-ums.imx | cut -f1 -d" ")
+  ### Construct log entry / Claimant Model statement.
+  # This step needs to be a bash script in order to substitute the fake take
+  # in the command args.
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/transparency-dev/armored-witness/cmd/manifest@${_ARMORED_WITNESS_REPO_VERSION} \
+          create \
+          --git_tag=${_MANUAL_TAG} \
+          --git_commit_fingerprint=$(cat output/armory-ums.imx.git-commit) \
+          --firmware_file=output/armory-ums.imx \
+          --firmware_type=RECOVERY \
+          --tamago_version=${_TAMAGO_VERSION} \
+          --raw \
+          --output_file=output/recovery_manifest_unsigned.json
+  # Sign the log entry.
+  - name: golang
+    args:
+      - go
+      - run
+      - github.com/transparency-dev/armored-witness/cmd/sign@${_ARMORED_WITNESS_REPO_VERSION}
+      - --project_name=${PROJECT_ID}
+      - --release=ci
+      - --artefact=recovery
+      - --manifest_file=output/recovery_manifest_unsigned.json
+      - --output_file=output/recovery_manifest
+  # Print the content of the signed manifest.
+  - name: bash
+    args:
+      - cat
+      - output/recovery_manifest
+  ### Write the firmware release to the transparency log.
+  # Copy the log entry to the sequence bucket, preparing to write to log.
+  #
+  # Use the SHA256 of the manifest as the name of the manifest. This allows
+  # multiple triggers to run without colliding.
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud storage cp output/recovery_manifest \
+        gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
+  # Sequence log entry.
+  - - name: gcr.io/cloud-builders/gcloud
+    args:
+      - functions
+      - call
+      - sequence
+      - '--data'
+      - >-
+        {
+          "entriesDir": "${_ENTRIES_DIR}",
+          "origin": "${_ORIGIN}",
+          "bucket": "${_LOG_NAME}",
+          "kmsKeyName": "ft-log-ci",
+          "kmsKeyRing": "firmware-release-ci",
+          "kmsKeyVersion": ${_KEY_VERSION},
+          "kmsKeyLocation": "global",
+          "noteKeyName": "transparency.dev-aw-ftlog-ci",
+          "checkpointCacheControl": "${_CHECKPOINT_CACHE}"
+        }
+  # Integrate log entry.
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - functions
+      - call
+      - integrate
+      - --data
+      - >-
+        {
+          "origin": "${_ORIGIN}",
+          "bucket": "${_LOG_NAME}",
+          "kmsKeyName": "ft-log-ci",
+          "kmsKeyRing": "firmware-release-ci",
+          "kmsKeyVersion": ${_KEY_VERSION},
+          "kmsKeyLocation": "global",
+          "noteKeyName": "transparency.dev-aw-ftlog-ci",
+          "checkpointCacheControl": "${_CHECKPOINT_CACHE}"
+        }
+  # Clean up the file we added to the _ENTRIES_DIR bucket now that it's been
+  # integrated to the log.
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud storage rm \
+        gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
+substitutions:
+  # Build-related.
+  _ARMORY_UMS_VERSION: v20231018
+  _FIRMWARE_BUCKET: armored-witness-firmware-ci-1
+  _MANUAL_TAG: 0.0.0
+  _TAMAGO_VERSION: '1.21.3'
+  # Log-related.
+  _ARMORED_WITNESS_REPO_VERSION: d37d6b19ec4dbd1cad3586ae8ba3ec913829d718
+  # This must correspond with the trailing number on the _FIRMWARE_BUCKET, _ORIGIN, _LOG_NAME values.
+  _KEY_VERSION: '1'
+  _LOG_NAME: armored-witness-firmware-log-ci-1
+  _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/1
+  _CHECKPOINT_CACHE: 'public, max-age=30'

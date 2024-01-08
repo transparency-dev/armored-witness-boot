@@ -37,8 +37,8 @@ steps:
           output/armory-ums.imx \
           gs://${_FIRMWARE_BUCKET}/$(sha256sum output/armory-ums.imx | cut -f1 -d" ")
   ### Construct log entry / Claimant Model statement.
-  # This step needs to be a bash script in order to substitute the fake take
-  # in the command args.
+  # This step needs to be a bash script in order to substitute the fake tag in
+  # the command args.
   - name: golang
     entrypoint: bash
     args:

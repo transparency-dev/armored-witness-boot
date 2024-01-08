@@ -42,6 +42,7 @@ TODO: add links for the GCS buckets once public.
 | **Verifier** | <ol><li>For Claim #1: third party auditing the Transparency.dev team</li><li>For Claim #2: the Transparency.dev team</li></ol> |
 | **Arbiter**  | Log ecosystem participants and reliers |
 
-The **Statement** is defined in [api/log_entries.go](api/log_entries.go).
+The **Statement** is defined in
+[https://github.com/transparency-dev/armored-witness-common/tree/main/release/firmware/ftlog/log_entries.go](https://github.com/transparency-dev/armored-witness-common/tree/main/release/firmware/ftlog/log_entries.go).
 An example is available at
-[api/example_firmware_release.json](api/example_firmware_release.json).
+[https://github.com/transparency-dev/armored-witness-common/tree/main/release/firmware/ftlog//example_firmware_release.json](https://github.com/transparency-dev/armored-witness-common/tree/main/release/firmware/ftlog//example_firmware_release.json).

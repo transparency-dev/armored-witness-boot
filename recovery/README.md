@@ -38,7 +38,7 @@ TODO: add links for the GCS buckets once public.
 | -----------  | ----------- |
 | **Claimant** | Transparency.dev team |
 | **Claim**    | <ol><li>The digest of the recovery tool is derived from this source Github repository, and is reproducible.</li><li>The recovery tool is issued by the Transparency.dev team.</li></ol> |
-| **Believer** | Armored Witness devices |
+| **Believer** | The [provision](https://github.com/transparency-dev/armored-witness/tree/main/cmd/provision) and [verify](https://github.com/transparency-dev/armored-witness/tree/main/cmd/verify) tools. |
 | **Verifier** | <ol><li>For Claim #1: third party auditing the Transparency.dev team</li><li>For Claim #2: the Transparency.dev team</li></ol> |
 | **Arbiter**  | Log ecosystem participants and reliers |
 

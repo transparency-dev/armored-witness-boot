@@ -1,7 +1,8 @@
 FROM golang:1.21.3-bookworm
 
 ARG TAMAGO_VERSION
-ARG ARMORY_UMS_VERSION
+# Pinned at tag [v20231018](https://github.com/usbarmory/armory-ums/releases/tag/v20231018)
+ARG ARMORY_UMS_VERSION=74060722c9aa92bbdcf3725ed0d0be4ebe8f8687
 ARG ARMORED_WITNESS_VERSION=228f2f6432babe1f1657e150ce0ca4a96ab394da
 
 # Install dependencies.

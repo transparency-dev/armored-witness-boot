@@ -26,11 +26,19 @@ executing it.
 
 ## Firmware transparency
 
-All ArmoredWitness firmware artefacts need to be added to a firmware transparency log,
-including the bootloader.
+All ArmoredWitness firmware artefacts need to be added to a firmware
+transparency log, including the bootloader.
 
-The provided `Makefile` has support for maintaining a local firmware transparency
-log on disk. This is intended to be used for development only.
+### Production log
+
+The `release/` directory contains Cloud Build configs to build and release the
+bootloader, and includes a step to add the release manifest to a log on GCP. See
+more info in `release/README.md`.
+
+### Local log
+
+The provided `Makefile` has support for maintaining a local firmware
+transparency log on disk. This is intended to be used for development only.
 
 In order to use this functionality, a log key pair can be generated with the
 following command:
@@ -81,8 +89,16 @@ make OS_PUBLIC_KEY1=armored-witness-boot-1.pub OS_PUBLIC_KEY2=armored-witness-bo
 
 ### Logging the Recovery image
 
-The `Makefile` has support for fetching and logging a released version of the armory-ums
-recovery image, too.
+#### Production log
+
+The `recovery/` directory contains Cloud Build configs to build and release the
+recovery image, and includes a step to add the release manifest to a log on GCP.
+See more info in `recovery/README.md`.
+
+#### Local log
+
+The `Makefile` has support for fetching and logging a released version of the
+armory-ums recovery image, too.
 
 Note that this uses `docker` under the covers.
 

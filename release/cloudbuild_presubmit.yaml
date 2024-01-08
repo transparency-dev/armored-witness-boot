@@ -1,0 +1,63 @@
+steps:
+  ### Build the bootloader binary and upload it to GCS.
+  # Use the dockerfile to build an image containing the bootloader artifact.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --build-arg
+      - TAMAGO_VERSION=${_TAMAGO_VERSION}
+      - --build-arg
+      - LOG_ORIGIN=${_ORIGIN}
+      - -t
+      - builder-image
+      - .
+  # Prepare a container with a copy of the artifacts.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - create
+      - --name
+      - builder_scratch
+      - builder-image
+  # Copy the artifacts from the container to the Cloud Build VM.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - cp
+      - builder_scratch:/build
+      - output
+  # List the artifacts.
+  - name: bash
+    args:
+      - ls
+      - output
+  ### Construct log entry / Claimant Model statement.
+  # This step needs to be a bash script in order to substitute the fake tag in
+  # the command args.
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/transparency-dev/armored-witness/cmd/manifest@${_ARMORED_WITNESS_REPO_VERSION} \
+          create \
+          --git_tag=${_MANUAL_TAG} \
+          --git_commit_fingerprint=${COMMIT_SHA} \
+          --firmware_file=output/armored-witness-boot.imx \
+          --firmware_type=BOOTLOADER \
+          --tamago_version=${_TAMAGO_VERSION} \
+          --raw \
+          --output_file=output/boot_manifest_unsigned.json
+  # TODO: sign the log entry with github.com/transparency-dev/armored-witness/cmd/sign
+  # after we create presubmit keys.
+  #
+  # Print the content of the signed manifest.
+  - name: bash
+    args:
+      - cat
+      - output/boot_manifest_unsigned.json
+substitutions:
+  # Build-related.
+  _MANUAL_TAG: 0.0.0
+  _TAMAGO_VERSION: '1.21.3'
+  _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/1
+  # Log-related.
+  _ARMORED_WITNESS_REPO_VERSION: d37d6b19ec4dbd1cad3586ae8ba3ec913829d718

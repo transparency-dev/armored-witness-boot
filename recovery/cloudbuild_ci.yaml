@@ -6,8 +6,6 @@ steps:
       - build
       - --build-arg
       - TAMAGO_VERSION=${_TAMAGO_VERSION}
-      - --build-arg
-      - ARMORY_UMS_VERSION=${_ARMORY_UMS_VERSION}
       - -t
       - builder-image
       - recovery
@@ -131,7 +129,6 @@ steps:
         gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
 substitutions:
   # Build-related.
-  _ARMORY_UMS_VERSION: v20231018
   _FIRMWARE_BUCKET: armored-witness-firmware-ci-1
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.3'

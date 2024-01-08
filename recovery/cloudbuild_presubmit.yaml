@@ -6,8 +6,6 @@ steps:
       - build
       - --build-arg
       - TAMAGO_VERSION=${_TAMAGO_VERSION}
-      - --build-arg
-      - ARMORY_UMS_VERSION=${_ARMORY_UMS_VERSION}
       - -t
       - builder-image
       - recovery
@@ -56,7 +54,6 @@ steps:
       - output/recovery_manifest_unsigned.json
 substitutions:
   # Build-related.
-  _ARMORY_UMS_VERSION: v20231018
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.3'
   # Log-related.

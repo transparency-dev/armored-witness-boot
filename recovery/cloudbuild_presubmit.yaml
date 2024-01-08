@@ -38,7 +38,7 @@ steps:
         go run github.com/transparency-dev/armored-witness/cmd/manifest@${_ARMORED_WITNESS_REPO_VERSION} \
           create \
           --git_tag=${_MANUAL_TAG} \
-          --git_commit_fingerprint=$(cat output/armory-ums.imx.git-commit) \
+          --git_commit_fingerprint=${COMMIT_SHA} \
           --firmware_file=output/armory-ums.imx \
           --firmware_type=RECOVERY \
           --tamago_version=${_TAMAGO_VERSION} \

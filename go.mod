@@ -1,6 +1,6 @@
 module github.com/transparency-dev/armored-witness-boot
 
-go 1.20
+go 1.21.5
 
 require (
 	github.com/transparency-dev/armored-witness-common v0.0.0-20231031160117-eefcf9dd7f27

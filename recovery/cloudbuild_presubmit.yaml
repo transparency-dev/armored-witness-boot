@@ -55,6 +55,6 @@ steps:
 substitutions:
   # Build-related.
   _MANUAL_TAG: 0.0.0
-  _TAMAGO_VERSION: '1.21.3'
+  _TAMAGO_VERSION: '1.21.5'
   # Log-related.
   _ARMORED_WITNESS_REPO_VERSION: d37d6b19ec4dbd1cad3586ae8ba3ec913829d718

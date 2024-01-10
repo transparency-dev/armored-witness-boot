@@ -44,7 +44,7 @@ steps:
     args:
       - -c
       - |
-        go run github.com/transparency-dev/armored-witness/cmd/manifest@${_ARMORED_WITNESS_REPO_VERSION} \
+        go run github.com/transparency-dev/armored-witness/cmd/manifest@main \
           create \
           --git_tag=${_MANUAL_TAG} \
           --git_commit_fingerprint=${COMMIT_SHA} \
@@ -58,7 +58,7 @@ steps:
     args:
       - go
       - run
-      - github.com/transparency-dev/armored-witness/cmd/sign@${_ARMORED_WITNESS_REPO_VERSION}
+      - github.com/transparency-dev/armored-witness/cmd/sign@main
       - --project_name=${PROJECT_ID}
       - --release=ci
       - --artefact=recovery
@@ -133,7 +133,6 @@ substitutions:
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.5'
   # Log-related.
-  _ARMORED_WITNESS_REPO_VERSION: d37d6b19ec4dbd1cad3586ae8ba3ec913829d718
   # This must correspond with the trailing number on the _FIRMWARE_BUCKET, _ORIGIN, _LOG_NAME values.
   _KEY_VERSION: '1'
   _LOG_NAME: armored-witness-firmware-log-ci-1

@@ -15,7 +15,7 @@ ENV TAMAGO=/usr/local/tamago-go/bin/go
 
 WORKDIR /build
 
-RUN git clone --branch ${ARMORY_UMS_VERSION} https://github.com/usbarmory/armory-ums.git
-RUN cd armory-ums && \
+RUN git clone https://github.com/usbarmory/armory-ums.git
+RUN cd armory-ums && git reset --hard ${ARMORY_UMS_VERSION} && \
     CROSS_COMPILE=arm-none-eabi- make imx && \
     git rev-parse --verify HEAD > armory-ums.imx.git-commit

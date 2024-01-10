@@ -55,5 +55,4 @@ steps:
 substitutions:
   # Build-related.
   _MANUAL_TAG: 0.0.0
-  _TAMAGO_VERSION: '1.21.3'
-  # Log-related.
+  _TAMAGO_VERSION: '1.21.5'

@@ -38,7 +38,7 @@ type ProofBundle struct {
 	InclusionProof [][]byte
 }
 
-// Config represents the armored-witness-boot configuration.
+// Config represents a firmware component configuration.
 type Config struct {
 	// Offset is the MMC/SD card offset to an ELF unikernel image (e.g. TamaGo).
 	Offset int64
@@ -49,6 +49,9 @@ type Config struct {
 	// Bundle contains firmware transparency artefacts relating to the firmware this config
 	// references.
 	Bundle ProofBundle
+	// NewIdentity is whether the device should ignore its previous data and boot
+	// as a new witness identity.
+	NewIdentity bool
 }
 
 // Encode serializes the configuration.

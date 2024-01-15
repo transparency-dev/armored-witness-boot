@@ -84,7 +84,7 @@ steps:
         gcloud storage cp output/boot_manifest \
         gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/boot_manifest | cut -f1 -d" ")
   # Sequence log entry.
-  - - name: gcr.io/cloud-builders/gcloud
+  - name: gcr.io/cloud-builders/gcloud
     args:
       - functions
       - call

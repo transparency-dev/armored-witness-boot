@@ -80,9 +80,9 @@ steps:
       - -c
       - |
         gcloud storage cp output/recovery_manifest \
-        gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
+          gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
   # Sequence log entry.
-  - - name: gcr.io/cloud-builders/gcloud
+  - name: gcr.io/cloud-builders/gcloud
     args:
       - functions
       - call
@@ -126,7 +126,7 @@ steps:
       - -c
       - |
         gcloud storage rm \
-        gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
+          gs://${_LOG_NAME}/${_ENTRIES_DIR}/$(sha256sum output/recovery_manifest | cut -f1 -d" ")
 substitutions:
   # Build-related.
   _FIRMWARE_BUCKET: armored-witness-firmware-ci-1

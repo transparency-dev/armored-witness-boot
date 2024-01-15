@@ -49,7 +49,7 @@ steps:
         go run github.com/transparency-dev/armored-witness/cmd/manifest@main \
           create \
           --git_tag=${_MANUAL_TAG} \
-          --git_commit_fingerprint=${COMMIT_SHA}
+          --git_commit_fingerprint=${COMMIT_SHA} \
           --firmware_file=output/armored-witness-boot.imx \
           --firmware_type=BOOTLOADER \
           --tamago_version=${_TAMAGO_VERSION} \

@@ -99,7 +99,7 @@ steps:
           \"kmsKeyLocation\": \"global\",
           \"noteKeyName\": \"transparency.dev-aw-ftlog-ci\",
           \"checkpointCacheControl\": \"${_CHECKPOINT_CACHE}\"
-        }
+        }"
   # Integrate log entry.
   - name: gcr.io/cloud-builders/gcloud
     args:

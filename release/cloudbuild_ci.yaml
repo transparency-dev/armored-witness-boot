@@ -1,16 +1,29 @@
 steps:
+  # First create a fake tag we'll use throughout the CI build process below.
+  # Unfortunately, GCB has no concept of dynamically creating substitutions or
+  # passing ENV vars between steps, so the best we can do is to create a file
+  # containing our tag in the shared workspace which other steps can inspect.
+  - name: bash
+    script: |
+      date +'0.0.%s-incompatible' > /workspace/fake_tag
+      cat /workspace/fake_tag
   ### Build the bootloader binary and upload it to GCS.
   # Use the dockerfile to build an image containing the bootloader artifact.
   - name: gcr.io/cloud-builders/docker
+    entrypoint: bash
     args:
-      - build
-      - --build-arg
-      - TAMAGO_VERSION=${_TAMAGO_VERSION}
-      - --build-arg
-      - LOG_ORIGIN=${_ORIGIN}
-      - -t
-      - builder-image
-      - .
+      - -c
+      - |
+        docker build \
+          --build-arg=TAMAGO_VERSION=${_TAMAGO_VERSION} \
+          --build-arg=LOG_ORIGIN=${_ORIGIN} \
+          --build-arg=LOG_PUBLIC_KEY=${_LOG_PUBLIC_KEY} \
+          --build-arg=OS_PUBLIC_KEY1=${_OS_PUBLIC_KEY1} \
+          --build-arg=OS_PUBLIC_KEY2=${_OS_PUBLIC_KEY2} \
+          --build-arg=GIT_SEMVER_TAG=$(cat /workspace/fake_tag) \
+          --build-arg=CONSOLE=${_CONSOLE} \
+          -t builder-image \
+          .
   # Prepare a container with a copy of the artifacts.
   - name: gcr.io/cloud-builders/docker
     args:
@@ -48,7 +61,7 @@ steps:
       - |
         go run github.com/transparency-dev/armored-witness/cmd/manifest@main \
           create \
-          --git_tag=${_MANUAL_TAG} \
+          --git_tag=$(cat /workspace/fake_tag) \
           --git_commit_fingerprint=${COMMIT_SHA} \
           --firmware_file=output/armored-witness-boot.imx \
           --firmware_type=BOOTLOADER \
@@ -134,10 +147,14 @@ substitutions:
   _FIRMWARE_BUCKET: armored-witness-firmware-ci-1
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.5'
+  _CONSOLE: 'on'
   # Log-related.
   _ENTRIES_DIR: firmware-log-sequence
   # This must correspond with the trailing number on the _FIRMWARE_BUCKET, _ORIGIN, _LOG_NAME values.
   _KEY_VERSION: '1'
   _LOG_NAME: armored-witness-firmware-log-ci-1
   _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/1
+  _LOG_PUBLIC_KEY: transparency.dev-aw-ftlog-ci+f5479c1e+AR6gW0mycDtL17iM2uvQUThJsoiuSRirstEj9a5AdCCu
+  _OS_PUBLIC_KEY1: transparency.dev-aw-os1-ci+7a0eaef3+AcsqvmrcKIbs21H2Bm2fWb6oFWn/9MmLGNc6NLJty2eQ
+  _OS_PUBLIC_KEY2: transparency.dev-aw-os2-ci+af8e4114+AbBJk5MgxRB+68KhGojhUdSt1ts5GAdRIT1Eq9zEkgQh
   _CHECKPOINT_CACHE: 'public, max-age=30'

@@ -6,6 +6,7 @@ ARG LOG_PUBLIC_KEY
 ARG OS_PUBLIC_KEY1
 ARG OS_PUBLIC_KEY2
 ARG GIT_SEMVER_TAG
+ARG BEE
 ARG CONSOLE
 
 # Install dependencies.
@@ -35,6 +36,7 @@ ENV LOG_ORIGIN=${LOG_ORIGIN} \
     OS_PUBLIC_KEY1="/tmp/os1.pub" \
     OS_PUBLIC_KEY2="/tmp/os2.pub" \
     GIT_SEMVER_TAG=${GIT_SEMVER_TAG} \
+    BEE=${BEE} \
     CONSOLE=${CONSOLE}
 
 RUN make imx

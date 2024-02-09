@@ -52,6 +52,44 @@ steps:
         gcloud storage cp \
           output/armored-witness-boot.imx \
           gs://${_FIRMWARE_BUCKET}/$(sha256sum output/armored-witness-boot.imx | cut -f1 -d" ")
+  # HAB: Create SRK table & hash
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/AlCutter/crucible/cmd/habtool@gcloud_support \
+          -z gcp \
+          -1 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk1-rev4-ci \
+          -2 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk2-rev4-ci \
+          -3 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk3-rev4-ci \
+          -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk4-rev4-ci \
+          -o output/gcp_hab_rev4_ci_srk.hash \
+          -t output/gcp_hab_rev4_ci_srk.srk-ca
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/AlCutter/crucible/cmd/habtool@gcloud_support \
+          -z gcp \
+          -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-csf1-rev4-ci \
+          -A projects/armored-witness/locations/global/keyRings/hab-ci/cryptoKeys/hab-csf1-rev4-ci/cryptoKeyVersions/1 \
+          -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-img1-rev4-ci \
+          -B projects/armored-witness/locations/global/keyRings/hab-ci/cryptoKeys/hab-img1-rev4-ci/cryptoKeyVersions/1 \
+          -x 1 \
+          -t output/gcp_hab_rev4_ci_srk.srk \
+          -i output/armored-witness-boot.imx \
+          -o output/armored-witness-boot.csf
+  # Copy the HAB signature into the CAS
+  - name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud storage cp \
+          output/armored-witness-boot.csf \
+          gs://${_FIRMWARE_BUCKET}/$(sha256sum output/armored-witness-boot.csf | cut -f1 -d" ")
   ### Construct log entry / Claimant Model statement.
   # This step needs to be a bash script in order to substitute the fake tag in
   # the command args.
@@ -69,6 +107,8 @@ steps:
           --tamago_version=${_TAMAGO_VERSION} \
           --build_env="BEE=${_BEE}" \
           --build_env="CONSOLE=${_CONSOLE}" \
+          --hab_signature_file=output/armored-witness-boot.csf \
+          --hab_target=ci \
           --raw \
           --output_file=output/boot_manifest_unsigned.json
   # Sign the log entry.

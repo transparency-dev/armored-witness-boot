@@ -53,6 +53,7 @@ steps:
           output/armored-witness-boot.imx \
           gs://${_FIRMWARE_BUCKET}/$(sha256sum output/armored-witness-boot.imx | cut -f1 -d" ")
   # HAB: Create SRK table & hash
+  # TODO(al): we should probably store the generated SRK/hash in a GCS bucket and then compare each time to ensure that nothing bad has happened with our PKI.
   - name: golang
     entrypoint: bash
     args:

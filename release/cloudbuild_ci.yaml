@@ -66,7 +66,7 @@ steps:
           -3 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk3-rev4-ci \
           -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk4-rev4-ci \
           -o output/gcp_hab_rev4_ci_srk.hash \
-          -t output/gcp_hab_rev4_ci_srk.srk-ca
+          -t output/gcp_hab_rev4_ci_srk.srk
   - name: golang
     entrypoint: bash
     args:

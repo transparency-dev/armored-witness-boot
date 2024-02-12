@@ -29,6 +29,35 @@ steps:
     args:
       - ls
       - output
+  # HAB: Create SRK table & hash
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/AlCutter/crucible/cmd/habtool@gcloud_support \
+          -z gcp \
+          -1 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk1-rev0-presubmit \
+          -2 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk2-rev0-presubmit \
+          -3 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk3-rev0-presubmit \
+          -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk4-rev0-presubmit \
+          -o output/gcp_hab_rev0_presubmit_srk.hash \
+          -t output/gcp_hab_rev0_presubmit_srk.srk
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/AlCutter/crucible/cmd/habtool@gcloud_support \
+          -z gcp \
+          -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificates/hab-csf1-rev0-presubmit \
+          -A projects/armored-witness/locations/global/keyRings/hab-presubmit/cryptoKeys/hab-csf1-rev0-presubmit/cryptoKeyVersions/1 \
+          -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificates/hab-img1-rev0-presubmit \
+          -B projects/armored-witness/locations/global/keyRings/hab-presubmit/cryptoKeys/hab-img1-rev0-presubmit/cryptoKeyVersions/1 \
+          -x 1 \
+          -t output/gcp_hab_rev0_presubmit_srk.srk \
+          -i output/armored-witness-boot.imx \
+          -o output/armored-witness-boot.csf
   ### Construct log entry / Claimant Model statement.
   # This step needs to be a bash script in order to substitute the fake tag in
   # the command args.
@@ -44,6 +73,8 @@ steps:
           --firmware_file=output/armored-witness-boot.imx \
           --firmware_type=BOOTLOADER \
           --tamago_version=${_TAMAGO_VERSION} \
+          --hab_signature_file=output/armored-witness-boot.csf \
+          --hab_target=presubmit \
           --raw \
           --output_file=output/boot_manifest_unsigned.json
   # TODO: sign the log entry with github.com/transparency-dev/armored-witness/cmd/sign
@@ -58,4 +89,4 @@ substitutions:
   # Build-related.
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.5'
-  _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/1
+  _ORIGIN: transparency.dev/armored-witness/firmware_transparency/presubmit/1

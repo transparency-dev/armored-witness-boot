@@ -147,7 +147,6 @@ steps:
       - -c
       - >
         gcloud functions call sequence \
-
         --data="{
           \"entriesDir\": \"${_ENTRIES_DIR}/$(sha256sum output/boot_manifest | cut -f1 -d" ")\",
           \"origin\": \"${_ORIGIN}\",

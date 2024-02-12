@@ -67,6 +67,8 @@ steps:
           --firmware_file=output/armored-witness-boot.imx \
           --firmware_type=BOOTLOADER \
           --tamago_version=${_TAMAGO_VERSION} \
+          --build_env="BEE=${_BEE}" \
+          --build_env="CONSOLE=${_CONSOLE}" \
           --raw \
           --output_file=output/boot_manifest_unsigned.json
   # Sign the log entry.

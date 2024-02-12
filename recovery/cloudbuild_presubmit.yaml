@@ -27,6 +27,35 @@ steps:
     args:
       - ls
       - output
+    # HAB: Create SRK table & hash
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/usbarmory/crucible/cmd/habtool \
+          -z gcp \
+          -1 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk1-rev0-presubmit \
+          -2 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk2-rev0-presubmit \
+          -3 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk3-rev0-presubmit \
+          -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk4-rev0-presubmit \
+          -o output/gcp_hab_rev0_presubmit_srk.hash \
+          -t output/gcp_hab_rev0_presubmit_srk.srk
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        go run github.com/usbarmory/crucible/cmd/habtool \
+          -z gcp \
+          -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificates/hab-csf1-rev0-presubmit \
+          -A projects/armored-witness/locations/global/keyRings/hab-presubmit/cryptoKeys/hab-csf1-rev0-presubmit/cryptoKeyVersions/1 \
+          -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificates/hab-img1-rev0-presubmit \
+          -B projects/armored-witness/locations/global/keyRings/hab-presubmit/cryptoKeys/hab-img1-rev0-presubmit/cryptoKeyVersions/1 \
+          -x 1 \
+          -t output/gcp_hab_rev0_presubmit_srk.srk \
+          -i output/armory-ums.imx \
+          -o output/armory-ums.csf
   ### Construct log entry / Claimant Model statement.
   # This step needs to be a bash script in order to substitute the fake tag in
   # the command args.
@@ -42,6 +71,8 @@ steps:
           --firmware_file=output/armory-ums.imx \
           --firmware_type=RECOVERY \
           --tamago_version=${_TAMAGO_VERSION} \
+          --hab_signature_file=output/armory-ums.csf \
+          --hab_target=ci \
           --raw \
           --output_file=output/recovery_manifest_unsigned.json
   # TODO: sign the log entry with github.com/transparency-dev/armored-witness/cmd/sign

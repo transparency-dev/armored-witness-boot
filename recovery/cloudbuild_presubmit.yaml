@@ -53,6 +53,7 @@ steps:
           -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificates/hab-img1-rev0-presubmit \
           -B projects/armored-witness/locations/global/keyRings/hab-presubmit/cryptoKeys/hab-img1-rev0-presubmit/cryptoKeyVersions/1 \
           -x 1 \
+          -s \
           -t output/gcp_hab_rev0_presubmit_srk.srk \
           -i output/armory-ums.imx \
           -o output/armory-ums.csf

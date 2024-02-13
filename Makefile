@@ -12,12 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BUILD_USER ?= $(shell whoami)
-BUILD_HOST ?= $(shell hostname)
 BUILD_EPOCH ?= $(shell /bin/date -u "+%s")
 BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart,linkprintk
-BUILD = ${BUILD_USER}@${BUILD_HOST} on ${BUILD_DATE}
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
 GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>/dev/null || git describe --match 'v*.*.*' --tags 2>/dev/null || git describe --tags 2>/dev/null || echo -n v0.0.${BUILD_EPOCH}+`git rev-parse HEAD`) | tail -c +2 )
 LOG_VERIFIER = $(shell test ${LOG_PUBLIC_KEY} && cat ${LOG_PUBLIC_KEY})
@@ -42,7 +39,7 @@ GOENV := GO_EXTLINK_ENABLED=0 CGO_ENABLED=0 GOOS=tamago GOARM=7 GOARCH=arm
 TEXT_START := 0x90010000 # ramStart (defined in imx6/imx6ul/memory.go) + 0x10000
 TAMAGOFLAGS := -tags ${BUILD_TAGS} -trimpath \
 	-ldflags "-s -w -T $(TEXT_START) -E _rt0_arm_tamago -R 0x1000 \
-			  -X 'main.Build=${BUILD}' -X 'main.Revision=${REV}' -X 'main.Version=${GIT_SEMVER_TAG}' \
+			  -X 'main.Revision=${REV}' -X 'main.Version=${GIT_SEMVER_TAG}' \
 			  -X 'main.OSLogOrigin=${LOG_ORIGIN}' \
 			  -X 'main.OSLogVerifier=${LOG_VERIFIER}' \
 			  -X 'main.OSManifestVerifiers=${OS_VERIFIERS}'"

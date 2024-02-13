@@ -36,9 +36,9 @@ func init() {
 		}
 	}
 
-	banner := fmt.Sprintf("armored-witness-boot • %s/%s (%s) • %s %s • %s",
+	banner := fmt.Sprintf("armored-witness-boot • %s/%s (%s) • %s • %s",
 		runtime.GOOS, runtime.GOARCH, runtime.Version(),
-		Revision, Build,
+		Revision,
 		imx6ul.Model())
 
 	log.SetFlags(0)

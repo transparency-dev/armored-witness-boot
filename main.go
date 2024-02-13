@@ -44,7 +44,6 @@ const (
 )
 
 var (
-	Build    string
 	Revision string
 	Version  string
 

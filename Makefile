@@ -216,6 +216,7 @@ qemu-gdb: $(APP)
 
 $(APP): check_tamago check_env
 	$(GOENV) $(TAMAGO) build $(TAMAGOFLAGS) -o ${APP}
+	sha256sum $(APP)
 
 $(APP).dcd: check_tamago
 $(APP).dcd: GOMODCACHE=$(shell ${TAMAGO} env GOMODCACHE)
@@ -230,6 +231,7 @@ $(APP).bin: $(APP)
 	    -j .bss --set-section-flags .bss=alloc,load,contents \
 	    -j .noptrbss --set-section-flags .noptrbss=alloc,load,contents \
 	    $(APP) -O binary $(APP).bin
+	sha256sum $(APP).bin
 
 $(APP).imx: SOURCE_DATE_EPOCH=0
 $(APP).imx: $(APP).bin $(APP).dcd
@@ -237,8 +239,10 @@ $(APP).imx: $(APP).bin $(APP).dcd
 	chmod 644 $(APP).dcd; \
 	echo "DATA 4 0x020e4024 0x00000001  # TZASC_BYPASS" >> $(APP).dcd; \
 	mkimage -v -n $(APP).dcd -T imximage -e $(TEXT_START) -d $(APP).bin $(APP).imx
+	sha256sum $(APP).imx
 	# Copy entry point from ELF file
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc
+	sha256sum $(APP).imx
 
 $(APP)_manifest: imx
 	@if [ "${BOOT_PRIVATE_KEY}" == "" ]; then \

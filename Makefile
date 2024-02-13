@@ -235,7 +235,7 @@ $(APP).imx: $(APP).bin $(APP).dcd
 	echo "## disabling TZASC bypass in DCD for pre-DDR initialization ##"; \
 	chmod 644 $(APP).dcd; \
 	echo "DATA 4 0x020e4024 0x00000001  # TZASC_BYPASS" >> $(APP).dcd; \
-	mkimage -n $(APP).dcd -T imximage -e $(TEXT_START) -d $(APP).bin $(APP).imx
+	SOURCE_DATE_EPOCH=0 mkimage -n $(APP).dcd -T imximage -e $(TEXT_START) -d $(APP).bin $(APP).imx
 	# Copy entry point from ELF file
 	dd if=$(APP) of=$(APP).imx bs=1 count=4 skip=24 seek=4 conv=notrunc
 

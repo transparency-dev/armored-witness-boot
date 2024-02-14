@@ -6,6 +6,8 @@ steps:
       - build
       - --build-arg
       - TAMAGO_VERSION=${_TAMAGO_VERSION}
+      - --build-arg
+      - ARMORY_UMS_VERSION=${_ARMORY_UMS_VERSION}
       - -t
       - builder-image
       - recovery
@@ -87,7 +89,7 @@ steps:
         go run github.com/transparency-dev/armored-witness/cmd/manifest@main \
           create \
           --git_tag=${_MANUAL_TAG} \
-          --git_commit_fingerprint=${COMMIT_SHA} \
+          --git_commit_fingerprint=${_ARMORY_UMS_VERSION} \
           --firmware_file=output/armory-ums.imx \
           --firmware_type=RECOVERY \
           --tamago_version=${_TAMAGO_VERSION} \
@@ -174,6 +176,9 @@ substitutions:
   _FIRMWARE_BUCKET: armored-witness-firmware-ci-1
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.5'
+  # Pinned at tag [v20231018](https://github.com/usbarmory/armory-ums/releases/tag/v20231018)
+  # This MUST be a full git commit tag for the armory-ums repo
+  _ARMORY_UMS_VERSION: 74060722c9aa92bbdcf3725ed0d0be4ebe8f8687
   # Log-related.
   # This must correspond with the trailing number on the _FIRMWARE_BUCKET, _ORIGIN, _LOG_NAME values.
   _KEY_VERSION: '1'

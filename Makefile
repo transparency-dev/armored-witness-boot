@@ -37,13 +37,13 @@ APP := armored-witness-boot
 CMD := armored-witness-image
 GOENV := GO_EXTLINK_ENABLED=0 CGO_ENABLED=0 GOOS=tamago GOARM=7 GOARCH=arm
 TEXT_START := 0x90010000 # ramStart (defined in imx6/imx6ul/memory.go) + 0x10000
-TAMAGOFLAGS := -tags ${BUILD_TAGS} -trimpath \
+TAMAGOFLAGS := -tags ${BUILD_TAGS} -trimpath -buildvcs=false -buildmode=exe \
 	-ldflags "-s -w -T $(TEXT_START) -E _rt0_arm_tamago -R 0x1000 \
 			  -X 'main.Revision=${REV}' -X 'main.Version=${GIT_SEMVER_TAG}' \
 			  -X 'main.OSLogOrigin=${LOG_ORIGIN}' \
 			  -X 'main.OSLogVerifier=${LOG_VERIFIER}' \
 			  -X 'main.OSManifestVerifiers=${OS_VERIFIERS}'"
-GOFLAGS := -trimpath -ldflags "-s -w"
+GOFLAGS := -trimpath -buildvcs=false -buildmode=exe -ldflags "-s -w"
 
 QEMU ?= qemu-system-arm -machine mcimx6ul-evk -cpu cortex-a7 -m 512M \
         -nographic -monitor none -serial null -serial stdio \

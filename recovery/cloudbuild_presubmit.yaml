@@ -51,7 +51,7 @@ steps:
           GOT=$(od -An -tx1 output/gcp_hab_rev0_presubmit_srk.hash | tr -d ' \n'); \
           if [ "${_EXPECTED_SRK_HASH}" != "$${GOT}" ]; then \
             echo "Got SRK hash '$${GOT}'"; \
-            echo "Exptected SRK hash '${_EXPECTED_SRK_HASH}'"; \
+            echo "Expected SRK hash '${_EXPECTED_SRK_HASH}'"; \
             exit 1; \
           fi; \
         fi

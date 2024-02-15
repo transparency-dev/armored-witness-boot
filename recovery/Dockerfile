@@ -1,8 +1,8 @@
 FROM golang:1.21.3-bookworm
 
 ARG TAMAGO_VERSION
-# Pinned at tag [v20231018](https://github.com/usbarmory/armory-ums/releases/tag/v20231018)
-ARG ARMORY_UMS_VERSION=74060722c9aa92bbdcf3725ed0d0be4ebe8f8687
+# Must be a valid commit hash for https://github.com/usbarmory/armory-ums/
+ARG ARMORY_UMS_VERSION=850baf54809bd29548d6f817933240043400a4e1
 
 # Install dependencies.
 RUN apt-get update && apt-get install -y make wget u-boot-tools binutils-arm-none-eabi
@@ -16,5 +16,5 @@ WORKDIR /build
 
 RUN git clone https://github.com/usbarmory/armory-ums.git
 RUN cd armory-ums && git reset --hard ${ARMORY_UMS_VERSION} && \
-    CROSS_COMPILE=arm-none-eabi- make imx && \
+    REPRODUCIBLE=1 make imx && \
     git rev-parse --verify HEAD > armory-ums.imx.git-commit

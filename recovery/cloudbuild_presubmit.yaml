@@ -41,6 +41,20 @@ steps:
           -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-presubmit/certificateAuthorities/hab-srk4-rev0-presubmit \
           -o output/gcp_hab_rev0_presubmit_srk.hash \
           -t output/gcp_hab_rev0_presubmit_srk.srk
+    # Assert SRK hash value
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        if [ -n "${_EXPECTED_SRK_HASH}" ]; then \
+          GOT=$(od -An -tx1 output/gcp_hab_rev0_presubmit_srk.hash | tr -d ' \n'); \
+          if [ "${_EXPECTED_SRK_HASH}" != "$${GOT}" ]; then \
+            echo "Got SRK hash '$${GOT}'"; \
+            echo "Exptected SRK hash '${_EXPECTED_SRK_HASH}'"; \
+            exit 1; \
+          fi; \
+        fi
   - name: golang
     entrypoint: bash
     args:
@@ -88,3 +102,5 @@ substitutions:
   # Build-related.
   _MANUAL_TAG: 0.0.0
   _TAMAGO_VERSION: '1.21.5'
+  # Pinned SRK hash
+  _EXPECTED_SRK_HASH: 'c91245871a69bd54b9ebd0e540b42c485396d19c338c8a94dc1c4c3a42a8c25e'

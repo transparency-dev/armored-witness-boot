@@ -53,6 +53,20 @@ steps:
           -4 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk4-rev4-ci \
           -o output/gcp_hab_rev4_ci_srk.hash \
           -t output/gcp_hab_rev4_ci_srk.srk
+  # Assert SRK hash value
+  - name: golang
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        if [ -n "${_EXPECTED_SRK_HASH} "]; then \
+          GOT=$(od -An -tx1 output/gcp_hab_rev4_ci_srk.hash | tr -d ' \n'); \
+          if [ "${_EXPECTED_SRK_HASH}" != "$${GOT}" ]; then \
+            echo "Got SRK hash '$${GOT}'"; \
+            echo "Exptected SRK hash '${_EXPECTED_SRK_HASH}'"; \
+            exit 1; \
+          fi; \
+        fi
   - name: golang
     entrypoint: bash
     args:
@@ -185,3 +199,5 @@ substitutions:
   _LOG_NAME: armored-witness-firmware-log-ci-1
   _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/1
   _CHECKPOINT_CACHE: 'public, max-age=30'
+  # Pinned SRK hash
+  _EXPECTED_SRK_HASH: 'b8ba457320663bf006accd3c57e06720e63b21ce5351cb91b4650690bb08d85a'

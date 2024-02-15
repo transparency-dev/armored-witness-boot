@@ -45,7 +45,7 @@ steps:
     args:
       - -c
       - |
-        go run github.com/AlCutter/crucible/cmd/habtool@e0a261c1492935c32b0fd57993c77573ae51c49d \
+        go run github.com/usbarmory/crucible/cmd/habtool@c77ff4b67b3cd86b4328ecbcad23394d54638ddc \
           -z gcp \
           -1 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk1-rev4-ci \
           -2 projects/armored-witness/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificateAuthorities/hab-srk2-rev4-ci \
@@ -58,7 +58,7 @@ steps:
     args:
       - -c
       - |
-        go run github.com/AlCutter/crucible/cmd/habtool@e0a261c1492935c32b0fd57993c77573ae51c49d \
+        go run github.com/usbarmory/crucible/cmd/habtool@c77ff4b67b3cd86b4328ecbcad23394d54638ddc \
           -z gcp \
           -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-csf1-rev4-ci \
           -A projects/armored-witness/locations/global/keyRings/hab-ci/cryptoKeys/hab-csf1-rev4-ci/cryptoKeyVersions/1 \

@@ -154,7 +154,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("armored-witness-boot: kernel verification error, %v", err))
 	}
-	log.Printf("armored-witness-boot: loaded kernel version %v", manifest.GitTagName)
+	log.Printf("armored-witness-boot: loaded kernel version %v", manifest.Git.TagName)
 
 	// For reference, this is how we'd fall back to verifying signatures only.
 	if false {

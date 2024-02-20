@@ -169,7 +169,7 @@ func main() {
 		if got, want := len(n.Sigs), len(manifestVerifiers); got < want {
 			panic(fmt.Sprintf("armored-witness-boot: kernel verification error, quorum not met (%d < %d)", got, want))
 		}
-		if fwHash, mHash := sha256.Sum256(os.Firmware), relManifest.FirmwareDigestSha256; !bytes.Equal(fwHash[:], mHash) {
+		if fwHash, mHash := sha256.Sum256(os.Firmware), relManifest.Output.FirmwareDigestSha256; !bytes.Equal(fwHash[:], mHash) {
 			panic("armored-witness-boot: kernel verification error, firmware hash != manifest hash")
 		}
 	}

@@ -135,7 +135,7 @@ log_recovery: check_log
 	@if [ ! -f ${LOG_STORAGE_DIR}/checkpoint ]; then \
 		make log_initialise LOG_STORAGE_DIR="${LOG_STORAGE_DIR}" ; \
 	fi
-	go run github.com/transparency-dev/armored-witness/cmd/manifest@2035e0372794bad33016cb8dbd6f43784ae1d9ca \
+	go run github.com/transparency-dev/armored-witness/cmd/manifest@561c0b09a2cc48877a8c9e59c3fbf7ffc81cdd4d \
 		create \
 		--git_tag=${ARMORY_UMS_GIT_TAG} \
 		--git_commit_fingerprint=$$(cat armory-ums.imx.git-commit) \
@@ -252,7 +252,7 @@ $(APP)_manifest: imx
 
 	# Create manifest
 	@echo ---------- Manifest --------------
-	go run github.com/transparency-dev/armored-witness/cmd/manifest@2035e0372794bad33016cb8dbd6f43784ae1d9ca \
+	go run github.com/transparency-dev/armored-witness/cmd/manifest@561c0b09a2cc48877a8c9e59c3fbf7ffc81cdd4d \
 		create \
 		--git_tag=${GIT_SEMVER_TAG} \
 		--git_commit_fingerprint="${REV}" \

@@ -74,9 +74,9 @@ steps:
       - |
         go run github.com/usbarmory/crucible/cmd/habtool@c77ff4b67b3cd86b4328ecbcad23394d54638ddc \
           -z gcp \
-          -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-csf1-rev4-ci \
+          -a projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-csf1-rev4-2-ci \
           -A projects/armored-witness/locations/global/keyRings/hab-ci/cryptoKeys/hab-csf1-rev4-ci/cryptoKeyVersions/1 \
-          -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-img1-rev4-ci \
+          -b projects/1071548024491/locations/us-central1/caPools/aw-hab-ca-pool-rev0-ci/certificates/hab-img1-rev4-2-ci \
           -B projects/armored-witness/locations/global/keyRings/hab-ci/cryptoKeys/hab-img1-rev4-ci/cryptoKeyVersions/1 \
           -x 1 \
           -s \

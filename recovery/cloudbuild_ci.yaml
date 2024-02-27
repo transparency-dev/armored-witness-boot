@@ -155,7 +155,7 @@ steps:
           \"kmsKeyRing\": \"firmware-release-ci\",
           \"kmsKeyVersion\": ${_KEY_VERSION},
           \"kmsKeyLocation\": \"global\",
-          \"noteKeyName\": \"transparency.dev-aw-ftlog-ci\",
+          \"noteKeyName\": \"transparency.dev-aw-ftlog-ci-${_KEY_VERSION}\",
           \"checkpointCacheControl\": \"${_CHECKPOINT_CACHE}\"
         }"
   # Integrate log entry.
@@ -173,7 +173,7 @@ steps:
           "kmsKeyRing": "firmware-release-ci",
           "kmsKeyVersion": ${_KEY_VERSION},
           "kmsKeyLocation": "global",
-          "noteKeyName": "transparency.dev-aw-ftlog-ci",
+          "noteKeyName": "transparency.dev-aw-ftlog-ci-${_KEY_VERSION}",
           "checkpointCacheControl": "${_CHECKPOINT_CACHE}"
         }
   # Clean up the file we added to the _ENTRIES_DIR bucket now that it's been
@@ -195,7 +195,7 @@ substitutions:
   _ARMORY_UMS_VERSION: 850baf54809bd29548d6f817933240043400a4e1
   # Log-related.
   # This must correspond with the trailing number on the _FIRMWARE_BUCKET, _ORIGIN, _LOG_NAME values.
-  _KEY_VERSION: '2'
+  _KEY_VERSION: 2
   _LOG_NAME: armored-witness-firmware-log-ci-2
   _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/2
   _CHECKPOINT_CACHE: 'public, max-age=30'

@@ -216,7 +216,7 @@ substitutions:
   _KEY_VERSION: '2'
   _LOG_NAME: armored-witness-firmware-log-ci-2
   _ORIGIN: transparency.dev/armored-witness/firmware_transparency/ci/2
-  _LOG_PUBLIC_KEY: transparency.dev-aw-ftlog-ci+5ee5545c+AZXqiaARpwF4MoNOxx46kuiIRjrML0PDTm+c7BLaAMt6
+  _LOG_PUBLIC_KEY: transparency.dev-aw-ftlog-ci-2+f77c6276+AZXqiaARpwF4MoNOxx46kuiIRjrML0PDTm+c7BLaAMt6
   _OS_PUBLIC_KEY1: transparency.dev-aw-os1-ci+79ac97d3+AZtlLPlrXDZtCms1IAImkyZ99QxZkL5Oa4od8Ex4pXgZ
   _OS_PUBLIC_KEY2: transparency.dev-aw-os2-ci+d187f8fc+ARpFT6v0uKOUkwwp5xtfR7fYOpcJlbYjkfBmLn9OU17H
   _CHECKPOINT_CACHE: 'public, max-age=30'

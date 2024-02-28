@@ -99,8 +99,12 @@ steps:
       - cat
       - output/recovery_manifest_unsigned.json
 substitutions:
+  # Note that to be a valid CloudBuild config these MUST all be strings.
+  # Without explicit quotes, some things may be interpreted as other types since
+  # this is a YAML file, so to avoid future tears let's keep these all quoted.
+  #
   # Build-related.
-  _MANUAL_TAG: 0.0.0
+  _MANUAL_TAG: '0.0.0'
   _TAMAGO_VERSION: '1.21.5'
   # Pinned SRK hash
   _EXPECTED_SRK_HASH: 'c91245871a69bd54b9ebd0e540b42c485396d19c338c8a94dc1c4c3a42a8c25e'

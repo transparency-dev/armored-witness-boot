@@ -106,7 +106,7 @@ substitutions:
   #
   # Build-related.
   _MANUAL_TAG: '0.0.0'
-  _TAMAGO_VERSION: '1.21.5'
+  _TAMAGO_VERSION: '1.22.0'
   _ORIGIN: 'transparency.dev/armored-witness/firmware_transparency/presubmit/1'
   # Pinned SRK hash
   _EXPECTED_SRK_HASH: 'c91245871a69bd54b9ebd0e540b42c485396d19c338c8a94dc1c4c3a42a8c25e'

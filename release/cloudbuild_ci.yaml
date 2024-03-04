@@ -211,7 +211,7 @@ substitutions:
   #
   # Build-related.
   _FIRMWARE_BUCKET: 'armored-witness-firmware-ci-2'
-  _TAMAGO_VERSION: '1.21.5'
+  _TAMAGO_VERSION: '1.22.0'
   _BEE: '1'
   _CONSOLE: 'on'
   # Log-related.

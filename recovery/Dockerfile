@@ -1,4 +1,4 @@
-FROM golang:1.21.3-bookworm
+FROM golang:1.22.0-bookworm
 
 ARG TAMAGO_VERSION
 # Must be a valid commit hash for https://github.com/usbarmory/armory-ums/

@@ -193,7 +193,7 @@ substitutions:
   # Build-related.
   _FIRMWARE_BUCKET: 'armored-witness-firmware-ci-2'
   _MANUAL_TAG: '0.0.0'
-  _TAMAGO_VERSION: '1.21.5'
+  _TAMAGO_VERSION: '1.22.0'
   # Pinned at tag [v20231018](https://github.com/usbarmory/armory-ums/releases/tag/v20231018)
   # This MUST be a full git commit tag for the armory-ums repo
   _ARMORY_UMS_VERSION: '850baf54809bd29548d6f817933240043400a4e1'

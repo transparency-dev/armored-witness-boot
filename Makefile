@@ -119,7 +119,8 @@ log_recovery: ARMORY_UMS_RELEASE=v20231018
 log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/artefacts
-log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+# Pin recovery tamago to 1.22.6 as it's not been updated to work with 1.23 yet.
+log_recovery: TAMAGO_SEMVER=1.22.6
 log_recovery: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/armory-ums.imx | cut -f1 -d" ")
 log_recovery: check_log
 	@if [ "${RECOVERY_PRIVATE_KEY}" == "" ]; then \

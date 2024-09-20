@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BUILD_EPOCH ?= $(shell /bin/date -u "+%s")
-BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
+BUILD_EPOCH ?= $(shell date -u "+%s")
+BUILD_DATE ?= $(shell date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart,linkprintk
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
 GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>/dev/null || git describe --match 'v*.*.*' --tags 2>/dev/null || git describe --tags 2>/dev/null || echo -n v0.0.${BUILD_EPOCH}+`git rev-parse HEAD`) | tail -c +2 )
@@ -23,7 +23,7 @@ OS_VERIFIERS = [\"$(shell test ${OS_PUBLIC_KEY1} && cat ${OS_PUBLIC_KEY1})\", \"
 TAMAGO_SEMVER = $(shell [ -n "${TAMAGO}" -a -x "${TAMAGO}" ] && ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
 MINIMUM_TAMAGO_VERSION=1.23.1
 
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 
 ifeq ("${BEE}","1")
 	BUILD_TAGS := ${BUILD_TAGS},bee

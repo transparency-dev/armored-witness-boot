@@ -82,11 +82,11 @@ log_initialise:
 
 check_log:
 	@if [ "${LOG_PRIVATE_KEY}" == "" -o "${LOG_PUBLIC_KEY}" == "" ]; then \
-		@echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
+		echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
 		exit 1; \
 	fi
 	@if [ "${DEV_LOG_DIR}" == "" ]; then \
-		@echo "You need to set the DEV_LOG_DIR variable"; \
+		echo "You need to set the DEV_LOG_DIR variable"; \
 		exit 1; \
 	fi
 

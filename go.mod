@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/transparency-dev/armored-witness-common v0.0.0-20240220112235-78461719cb5e
-	github.com/usbarmory/armory-boot v0.0.0-20230922092524-e66d926bc36c
+	github.com/usbarmory/armory-boot v0.0.0-20240923142302-e7f9d2b2cef1
 	github.com/usbarmory/tamago v0.0.0-20240909213541-c4704957c2e1
 	golang.org/x/mod v0.21.0
 )
@@ -17,9 +17,11 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/transparency-dev/formats v0.0.0-20230920083814-0f75b1d4e813 // indirect
 	github.com/transparency-dev/merkle v0.0.2 // indirect
-	github.com/u-root/u-root v0.11.0 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
+	github.com/u-root/u-root v0.14.0 // indirect
+	github.com/u-root/uio v0.0.0-20240209044354-b3d14b93376a // indirect
+	golang.org/x/crypto v0.27.0 // indirect
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sync v0.6.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 )

@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-BUILD_EPOCH ?= $(shell /bin/date -u "+%s")
-BUILD_DATE ?= $(shell /bin/date -u "+%Y-%m-%d %H:%M:%S")
+BUILD_EPOCH ?= $(shell date -u "+%s")
+BUILD_DATE ?= $(shell date -u "+%Y-%m-%d %H:%M:%S")
 BUILD_TAGS = linkramsize,linkramstart,linkprintk
 REV = $(shell git rev-parse --short HEAD 2> /dev/null)
 GIT_SEMVER_TAG ?= $(shell (git describe --tags --exact-match --match 'v*.*.*' 2>/dev/null || git describe --match 'v*.*.*' --tags 2>/dev/null || git describe --tags 2>/dev/null || echo -n v0.0.${BUILD_EPOCH}+`git rev-parse HEAD`) | tail -c +2 )
@@ -21,9 +21,9 @@ LOG_VERIFIER = $(shell test ${LOG_PUBLIC_KEY} && cat ${LOG_PUBLIC_KEY})
 OS_VERIFIERS = [\"$(shell test ${OS_PUBLIC_KEY1} && cat ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && cat ${OS_PUBLIC_KEY2})\"]
 
 TAMAGO_SEMVER = $(shell [ -n "${TAMAGO}" -a -x "${TAMAGO}" ] && ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
-MINIMUM_TAMAGO_VERSION=1.22.0
+MINIMUM_TAMAGO_VERSION=1.23.1
 
-SHELL = /bin/bash
+SHELL = /usr/bin/env bash
 
 ifeq ("${BEE}","1")
 	BUILD_TAGS := ${BUILD_TAGS},bee
@@ -82,11 +82,11 @@ log_initialise:
 
 check_log:
 	@if [ "${LOG_PRIVATE_KEY}" == "" -o "${LOG_PUBLIC_KEY}" == "" ]; then \
-		@echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
+		echo "You need to set LOG_PRIVATE_KEY and LOG_PUBLIC_KEY variables"; \
 		exit 1; \
 	fi
 	@if [ "${DEV_LOG_DIR}" == "" ]; then \
-		@echo "You need to set the DEV_LOG_DIR variable"; \
+		echo "You need to set the DEV_LOG_DIR variable"; \
 		exit 1; \
 	fi
 
@@ -119,7 +119,8 @@ log_recovery: ARMORY_UMS_RELEASE=v20231018
 log_recovery: ARMORY_UMS_GIT_TAG="0.0.0-incompatible+${ARMORY_UMS_RELEASE}" # Workaround for semver format requirement.
 log_recovery: LOG_STORAGE_DIR=$(DEV_LOG_DIR)/log
 log_recovery: LOG_ARTEFACT_DIR=$(DEV_LOG_DIR)/artefacts
-log_recovery: TAMAGO_SEMVER=$(shell ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
+# Pin recovery tamago to 1.22.6 as it's not been updated to work with 1.23 yet.
+log_recovery: TAMAGO_SEMVER=1.22.6
 log_recovery: ARTEFACT_HASH=$(shell sha256sum ${CURDIR}/armory-ums.imx | cut -f1 -d" ")
 log_recovery: check_log
 	@if [ "${RECOVERY_PRIVATE_KEY}" == "" ]; then \

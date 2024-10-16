@@ -72,6 +72,6 @@ func init() {
 		bee.AliasRegion0,
 		bee.AliasRegion1 + bee.AliasRegionSize,
 		0,
-		arm.TTE_CACHEABLE | arm.TTE_BUFFERABLE | arm.TTE_SECTION | arm.TTE_AP_001<<10,
+		arm.MemoryRegion,
 	)
 }

@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/transparency-dev/armored-witness-common v0.0.0-20240220112235-78461719cb5e
 	github.com/usbarmory/armory-boot v0.0.0-20240924115649-09d0327c3c99
-	github.com/usbarmory/tamago v0.0.0-20240924114619-273d67cd811d
+	github.com/usbarmory/tamago v0.0.0-20250327164348-77f2a17385b6
 	golang.org/x/mod v0.24.0
 )
 

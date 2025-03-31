@@ -1,11 +1,11 @@
 module github.com/transparency-dev/armored-witness-boot
 
-go 1.23.1
+go 1.24.1
 
 require (
 	github.com/transparency-dev/armored-witness-common v0.0.0-20240220112235-78461719cb5e
 	github.com/usbarmory/armory-boot v0.0.0-20240924115649-09d0327c3c99
-	github.com/usbarmory/tamago v0.0.0-20240924114619-273d67cd811d
+	github.com/usbarmory/tamago v0.0.0-20250327164348-77f2a17385b6
 	golang.org/x/mod v0.24.0
 )
 
@@ -22,6 +22,5 @@ require (
 	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/net v0.36.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 )

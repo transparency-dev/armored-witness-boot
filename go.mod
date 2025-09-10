@@ -6,7 +6,7 @@ require (
 	github.com/transparency-dev/armored-witness-common v0.0.0-20240220112235-78461719cb5e
 	github.com/usbarmory/armory-boot v0.0.0-20250827125939-ac32f955c61c
 	github.com/usbarmory/tamago v0.0.0-20250828093603-d8ac0d8fb083
-	golang.org/x/mod v0.27.0
+	golang.org/x/mod v0.28.0
 )
 
 require (

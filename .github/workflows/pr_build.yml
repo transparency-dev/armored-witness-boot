@@ -8,7 +8,7 @@ permissions:  # added using https://github.com/step-security/secure-repo
 jobs:
   build:
     env:
-      TAMAGO_VERSION: 1.24.1
+      TAMAGO_VERSION: 1.25.0
       TAMAGO: /usr/local/tamago-go/bin/go
       LOG_ORIGIN: throwaway.transparency.dev/armored-witness-boot/pr-build/0
       LOG_PRIVATE_KEY: /tmp/log.sec

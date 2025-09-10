@@ -21,7 +21,7 @@ LOG_VERIFIER = $(shell test ${LOG_PUBLIC_KEY} && cat ${LOG_PUBLIC_KEY})
 OS_VERIFIERS = [\"$(shell test ${OS_PUBLIC_KEY1} && cat ${OS_PUBLIC_KEY1})\", \"$(shell test ${OS_PUBLIC_KEY2} && cat ${OS_PUBLIC_KEY2})\"]
 
 TAMAGO_SEMVER = $(shell [ -n "${TAMAGO}" -a -x "${TAMAGO}" ] && ${TAMAGO} version | sed 's/.*go\([0-9]\.[0-9]*\.[0-9]*\).*/\1/')
-MINIMUM_TAMAGO_VERSION=1.24.1
+MINIMUM_TAMAGO_VERSION=1.25.0
 
 SHELL = /usr/bin/env bash
 

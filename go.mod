@@ -15,7 +15,7 @@ require (
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-errors/errors v1.0.2 // indirect
-	github.com/klauspost/compress v1.17.4 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/transparency-dev/formats v0.0.0-20230920083814-0f75b1d4e813 // indirect
 	github.com/transparency-dev/merkle v0.0.2 // indirect
